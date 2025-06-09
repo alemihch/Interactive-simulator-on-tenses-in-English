@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Интерактивный справочник по временам английского языка</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm & Harmonious -->
+    <!-- Application Structure Plan: The application uses a thematic, section-based structure, grouping tenses into Present, Past, and Future categories. This is a standard and intuitive pedagogical approach. A sticky navigation bar allows for quick scrolling. Each tense is presented on an interactive card with internal tabs for "Rules," "Usage & Signals," "Examples," and "Trainer." This design breaks down complex information into digestible, user-controlled chunks, promoting active learning over passive reading and preventing information overload, which is superior to a static table for this type of content. -->
+    <!-- Visualization & Content Choices: Goal: Organize, Inform & Engage. Method: Structured HTML/CSS with Tailwind for a card-based layout and interactive forms. Interaction: Clickable tabs within each card switch between content panes (Rules, Usage, Examples, Trainer). The Trainer tab contains multiple-choice questions with dynamic feedback and score tracking. Justification: Since the source data is textual and rule-based, traditional charts are inappropriate. The interactive card/tab model is the most effective way to organize this layered information, allowing users to drill down into specifics as needed. The addition of interactive exercises directly addresses the need for practical application of grammar rules. Library/Method: Vanilla JS for interactions and exercise logic. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F3F0;
+            color: #3D3D3D;
+        }
+        .tab-btn {
+            @apply py-2 px-4 font-semibold text-[#6E6E6E] hover:text-[#E6A473] transition-colors;
+        }
+        .tab-btn.active {
+            background-color: #E6A473;
+            color: #FFFFFF;
+            border-radius: 0.375rem 0.375rem 0 0;
+            transition: all 0.2s ease-in-out;
+        }
+        .tense-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .correct-answer {
+            color: #16A34A; /* Tailwind green-600 */
+            font-weight: bold;
+        }
+        .wrong-answer {
+            color: #DC2626; /* Tailwind red-600 */
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div id="app" class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#3D3D3D] mb-2">Интерактивный справочник по временам</h1>
+            <p class="text-lg text-[#6E6E6E]">Ваш гид в мире английской грамматики</p>
+        </header>
+
+        <nav class="sticky top-0 z-10 bg-[#F5F3F0]/80 backdrop-blur-sm py-4 mb-8 border-b border-[#A69B8F]/30">
+            <div class="flex justify-center items-center space-x-4 sm:space-x-8">
+                <a href="#present" class="nav-link text-lg font-semibold text-[#6E6E6E] hover:text-[#E6A473] transition-colors">Настоящее</a>
+                <a href="#past" class="nav-link text-lg font-semibold text-[#6E6E6E] hover:text-[#E6A473] transition-colors">Прошедшее</a>
+                <a href="#future" class="nav-link text-lg font-semibold text-[#6E6E6E] hover:text-[#E6A473] transition-colors">Будущее</a>
+            </div>
+        </nav>
+
+        <main>
+            <section id="present" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-bold mb-6 border-l-4 border-[#E6A473] pl-4">Настоящие времена (Present Tenses)</h2>
+                <p class="mb-8 text-[#6E6E6E] max-w-4xl">В этом разделе представлены времена, которые используются для описания действий в настоящем. Они помогают говорить о регулярных привычках, действиях, происходящих в данный момент, завершенных действиях с результатом в настоящем и длительных процессах, которые все еще актуальны.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Present Simple -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Present Simple</h3>
+                        <div class="tabs" data-tense="ps">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                                <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + V1 / V_s(es)</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + do/does not + V1</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Do/Does + S + V1?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Регулярные действия, привычки, факты, расписания, общепринятые истины.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">always, often, usually, sometimes, rarely, never, every day/week/year.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>I <span class="font-semibold text-[#3D3D3D]">work</span> every day.</li>
+                                    <li>She <span class="font-semibold text-[#3D3D3D]">drinks</span> coffee.</li>
+                                    <li>The sun <span class="font-semibold text-[#3D3D3D]">rises</span> in the East.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="ps"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="ps">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Present Continuous -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Present Continuous</h3>
+                         <div class="tabs" data-tense="pc">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                                <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + am/is/are + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + am/is/are not + Ving</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Am/Is/Are + S + Ving?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действия, происходящие прямо сейчас, временные действия, меняющиеся ситуации, планы на ближайшее будущее.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">now, right now, at the moment, currently, this week.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>I <span class="font-semibold text-[#3D3D3D]">am working</span> now.</li>
+                                    <li>They <span class="font-semibold text-[#3D3D3D]">are studying</span> for an exam this week.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="pc"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="pc">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Present Perfect -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Present Perfect</h3>
+                        <div class="tabs" data-tense="pp">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                                <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + have/has + V3</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + have/has not + V3</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Have/Has + S + V3?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действия с результатом в настоящем; опыт; действия, начавшиеся в прошлом и продолжающиеся до сих пор.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">ever, never, already, yet, just, for, since, recently.</p>
+                            </div>
+                             <div class="tab-content hidden" data-tab-content="examples">
+                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>I <span class="font-semibold text-[#3D3D3D]">have finished</span> my homework.</li>
+                                    <li>She <span class="font-semibold text-[#3D3D3D]">has lived</span> here for five years.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="pp"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="pp">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Present Perfect Continuous -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Present Perfect Continuous</h3>
+                        <div class="tabs" data-tense="ppc">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + have/has been + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + have/has not been + Ving</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Have/Has + S + been + Ving?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действия, начавшиеся в прошлом, продолжающиеся до сих пор, с акцентом на длительность.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">for, since, how long.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>I <span class="font-semibold text-[#3D3D3D]">have been studying</span> for three hours.</li>
+                                    <li>It <span class="font-semibold text-[#3D3D3D]">has been raining</span> all day.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="ppc"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="ppc">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="past" class="mb-16 scroll-mt-24">
+                <h2 class="text-3xl font-bold mb-6 border-l-4 border-[#E6A473] pl-4">Прошедшие времена (Past Tenses)</h2>
+                <p class="mb-8 text-[#6E6E6E] max-w-4xl">Времена этой группы описывают события, которые произошли и завершились в прошлом. Они позволяют рассказать о конкретных моментах в прошлом, длительных действиях, служивших фоном для других событий, и действиях, которые завершились до определенного момента в прошлом.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- Past Simple -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Past Simple</h3>
+                        <div class="tabs" data-tense="pas">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + V2 / V_ed</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + did not + V1</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Did + S + V1?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Завершенные действия в определенный момент в прошлом.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">yesterday, last week/month/year, ago, in 1990.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                               <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>I <span class="font-semibold text-[#3D3D3D]">went</span> to the cinema yesterday.</li>
+                                    <li>She <span class="font-semibold text-[#3D3D3D]">called</span> me last night.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="pas"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="pas">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Past Continuous -->
+                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Past Continuous</h3>
+                        <div class="tabs" data-tense="pac">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + was/were + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + was/were not + Ving</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Was/Were + S + Ving?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действия, происходившие в определенный момент в прошлом; фоновые действия.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">while, as, when.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                               <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>I <span class="font-semibold text-[#3D3D3D]">was reading</span> when she called.</li>
+                                    <li>They <span class="font-semibold text-[#3D3D3D]">were playing</span> while I was cooking.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="pac"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="pac">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Past Perfect -->
+                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Past Perfect</h3>
+                        <div class="tabs" data-tense="pap">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + had + V3</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + had not + V3</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Had + S + V3?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действие, которое произошло до другого действия в прошлом (предпрошедшее время).</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">by the time, before, after.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                               <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>I <span class="font-semibold text-[#3D3D3D]">had finished</span> my work before he arrived.</li>
+                                    <li>She <span class="font-semibold text-[#3D3D3D]">had never seen</span> a tiger until she went to Africa.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="pap"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="pap">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Past Perfect Continuous -->
+                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Past Perfect Continuous</h3>
+                        <div class="tabs" data-tense="papc">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + had been + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + had not been + Ving</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Had + S + been + Ving?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действие, которое длилось до определенного момента в прошлом.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">for, since.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                               <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>They <span class="font-semibold text-[#3D3D3D]">had been waiting</span> for an hour when the bus finally came.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="papc"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="papc">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="future" class="scroll-mt-24">
+                <h2 class="text-3xl font-bold mb-6 border-l-4 border-[#E6A473] pl-4">Будущие времена (Future Tenses)</h2>
+                <p class="mb-8 text-[#6E6E6E] max-w-4xl">Эта группа времен используется для разговора о будущем. С их помощью можно делать прогнозы, говорить о планах, спонтанных решениях, а также описывать действия, которые будут в процессе или завершатся к определенному моменту в будущем.</p>
+                <div class="grid md:grid-cols-2 gap-8">
+                     <!-- Future Simple -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Future Simple</h3>
+                        <div class="tabs" data-tense="fs">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will + V1</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not (won't) + V1</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + V1?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Предсказания, обещания, спонтанные решения, действия в будущем без плана.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">tomorrow, next week/year, in the future.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                               <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>I <span class="font-semibold text-[#3D3D3D]">will help</span> you.</li>
+                                    <li>It <span class="font-semibold text-[#3D3D3D]">will rain</span> tomorrow.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="fs"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="fs">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Future Continuous -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Future Continuous</h3>
+                        <div class="tabs" data-tense="fc">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will be + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not be + Ving</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + be + Ving?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действия, которые будут происходить в определенный момент в будущем.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">at this time tomorrow, by this time next week.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                               <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>At 10 AM tomorrow, I <span class="font-semibold text-[#3D3D3D]">will be working</span>.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="fc"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="fc">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Future Perfect -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Future Perfect</h3>
+                        <div class="tabs" data-tense="fp">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will have + V3</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not have + V3</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + have + V3?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действие, которое будет завершено к определенному моменту в будущем.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">by (a future time), by the time.</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                               <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>By next year, I <span class="font-semibold text-[#3D3D3D]">will have graduated</span>.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="fp"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="fp">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Future Perfect Continuous -->
+                    <div class="tense-card bg-white rounded-lg shadow-md p-6">
+                        <h3 class="text-2xl font-bold mb-4">Future Perfect Continuous</h3>
+                        <div class="tabs" data-tense="fpc">
+                            <div class="flex border-b mb-4">
+                                <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
+                                <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
+                            </div>
+                            <div class="tab-content" data-tab-content="rules">
+                               <ul class="space-y-3">
+                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will have been + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not have been + Ving</li>
+                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + have been + Ving?</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="usage">
+                                <h4 class="font-bold mb-2">Когда используется:</h4>
+                                <p class="mb-4 text-[#6E6E6E]">Действие, которое будет длиться до определенного момента в будущем.</p>
+                                <h4 class="font-bold mb-2">Слова-сигналы:</h4>
+                                <p class="text-[#6E6E6E]">for (duration) by (future time).</p>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="examples">
+                               <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
+                                    <li>By midnight, I <span class="font-semibold text-[#3D3D3D]">will have been writing</span> for five hours.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-content hidden" data-tab-content="trainer">
+                                <div class="exercise-area" data-tense="fpc"></div>
+                                <div class="text-center mt-4 hidden" data-result-area="fpc">
+                                    <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer class="text-center mt-12 py-6 border-t border-[#A69B8F]/30">
+            <p class="text-[#6E6E6E]">Создано для интерактивного изучения грамматики.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const exercises = {
+            ps: [ // Present Simple
+                { sentence: "She usually ___ coffee in the morning.", options: ["drink", "drinks", "drinking"], correct: "drinks" },
+                { sentence: "They ___ to school every day.", options: ["go", "goes", "going"], correct: "go" },
+                { sentence: "He never ___ meat.", options: ["eat", "eats", "eating"], correct: "eats" },
+                { sentence: "We ___ TV in the evening.", options: ["watch", "watches", "watching"], correct: "watch" },
+                { sentence: "The sun ___ in the East.", options: ["rise", "rises", "rising"], correct: "rises" },
+                { sentence: "My brother ___ sports.", options: ["like", "likes", "liking"], correct: "likes" },
+                { sentence: "I ___ a student.", options: ["am", "is", "are"], correct: "am" },
+                { sentence: "Cats ___ mice.", options: ["catch", "catches", "catching"], correct: "catch" },
+                { sentence: "Does she ___ in a big city?", options: ["live", "lives", "living"], correct: "live" },
+                { sentence: "They ___ speak English.", options: ["do not", "does not", "is not"], correct: "do not" }
+            ],
+            pc: [ // Present Continuous
+                { sentence: "I ___ a book right now.", options: ["read", "am reading", "reads"], correct: "am reading" },
+                { sentence: "They ___ for an exam this week.", options: ["study", "are studying", "studies"], correct: "are studying" },
+                { sentence: "She ___ not sleeping at the moment.", options: ["is", "are", "am"], correct: "is" },
+                { sentence: "___ you listening to me?", options: ["Am", "Is", "Are"], correct: "Are" },
+                { sentence: "He ___ dinner tonight.", options: ["cooks", "is cooking", "cook"], correct: "is cooking" },
+                { sentence: "The children ___ in the park.", options: ["play", "are playing", "plays"], correct: "are playing" },
+                { sentence: "We ___ a new project currently.", options: ["work on", "are working on", "works on"], correct: "are working on" },
+                { sentence: "Look! It ___ outside.", options: ["rains", "is raining", "rain"], correct: "is raining" },
+                { sentence: "Why ___ you smiling?", options: ["are", "is", "am"], correct: "are" },
+                { sentence: "I ___ not going out tonight.", options: ["am", "is", "are"], correct: "am" }
+            ],
+            pp: [ // Present Perfect
+                { sentence: "I ___ my homework already.", options: ["finish", "have finished", "has finished"], correct: "have finished" },
+                { sentence: "She ___ here for five years.", options: ["lives", "has lived", "is living"], correct: "has lived" },
+                { sentence: "They ___ never seen a tiger.", options: ["have", "has", "had"], correct: "have" },
+                { sentence: "___ you ever been to Paris?", options: ["Are", "Have", "Has"], correct: "Have" },
+                { sentence: "He ___ just arrived.", options: ["have", "has", "is"], correct: "has" },
+                { sentence: "We ___ not eaten yet.", options: ["did", "have", "are"], correct: "have" },
+                { sentence: "My sister ___ a new car recently.", options: ["bought", "has bought", "buys"], correct: "has bought" },
+                { sentence: "How long ___ you known him?", options: ["do", "have", "are"], correct: "have" },
+                { sentence: "She ___ finished her report.", options: ["have not", "has not", "did not"], correct: "has not" },
+                { sentence: "I ___ already drunk my coffee.", options: ["have", "has", "am"], correct: "have" }
+            ],
+            ppc: [ // Present Perfect Continuous
+                { sentence: "I ___ for three hours.", options: ["study", "have been studying", "has been studying"], correct: "have been studying" },
+                { sentence: "It ___ all day.", options: ["rains", "has been raining", "is raining"], correct: "has been raining" },
+                { sentence: "They ___ for an hour.", options: ["wait", "have been waiting", "are waiting"], correct: "have been waiting" },
+                { sentence: "How long ___ you been learning English?", options: ["have", "has", "are"], correct: "have" },
+                { sentence: "She ___ not been feeling well lately.", options: ["have", "has", "is"], correct: "has" },
+                { sentence: "He ___ since morning.", options: ["sleeps", "has been sleeping", "is sleeping"], correct: "has been sleeping" },
+                { sentence: "We ___ on this project for months.", options: ["are working", "have been working", "work"], correct: "have been working" },
+                { sentence: "The children ___ since noon.", options: ["play", "are playing", "have been playing"], correct: "have been playing" },
+                { sentence: "What ___ you been doing?", options: ["have", "are", "do"], correct: "have" },
+                { sentence: "It ___ snowing for two hours.", options: ["is", "has been", "was"], correct: "has been" }
+            ],
+            pas: [ // Past Simple
+                { sentence: "I ___ to the cinema yesterday.", options: ["go", "went", "gone"], correct: "went" },
+                { sentence: "She ___ me last night.", options: ["call", "called", "calling"], correct: "called" },
+                { sentence: "They ___ not come to the party.", options: ["did", "do", "were"], correct: "did" },
+                { sentence: "___ you finish your work?", options: ["Do", "Did", "Have"], correct: "Did" },
+                { sentence: "He ___ a new car two days ago.", options: ["buy", "bought", "buys"], correct: "bought" },
+                { sentence: "We ___ happy to see them.", options: ["are", "were", "was"], correct: "were" },
+                { sentence: "She ___ English at university.", options: ["study", "studied", "studies"], correct: "studied" },
+                { sentence: "My parents ___ in 1990.", options: ["marry", "married", "marries"], correct: "married" },
+                { sentence: "Where ___ you go last summer?", options: ["do", "did", "have"], correct: "did" },
+                { sentence: "I ___ him for the first time then.", options: ["met", "meet", "meeting"], correct: "met" }
+            ],
+            pac: [ // Past Continuous
+                { sentence: "I ___ when she called.", options: ["read", "was reading", "am reading"], correct: "was reading" },
+                { sentence: "They ___ while I was cooking.", options: ["played", "were playing", "are playing"], correct: "were playing" },
+                { sentence: "She ___ not sleeping at 10 PM yesterday.", options: ["was", "were", "is"], correct: "was" },
+                { sentence: "___ you watching TV at that moment?", options: ["Was", "Were", "Are"], correct: "Were" },
+                { sentence: "He ___ dinner when the phone rang.", options: ["cooked", "was cooking", "is cooking"], correct: "was cooking" },
+                { sentence: "The children ___ in the garden all morning.", options: ["play", "were playing", "are playing"], correct: "were playing" },
+                { sentence: "While I ___ to music, my phone rang.", options: ["listened", "was listening", "am listening"], correct: "was listening" },
+                { sentence: "What ___ you doing at 3 PM?", options: ["was", "were", "are"], correct: "were" },
+                { sentence: "They ___ not paying attention.", options: ["was", "were", "are"], correct: "were" },
+                { sentence: "The sun ___ brightly when we left.", options: ["shone", "was shining", "is shining"], correct: "was shining" }
+            ],
+            pap: [ // Past Perfect
+                { sentence: "I ___ my work before he arrived.", options: ["finish", "had finished", "finished"], correct: "had finished" },
+                { sentence: "She ___ never seen a tiger until then.", options: ["has", "had", "was"], correct: "had" },
+                { sentence: "They ___ already left when I got there.", options: ["have", "had", "were"], correct: "had" },
+                { sentence: "By the time we arrived, the movie ___.", options: ["started", "had started", "was starting"], correct: "had started" },
+                { sentence: "He realized he ___ his keys at home.", options: ["left", "had left", "has left"], correct: "had left" },
+                { sentence: "She ___ for two hours before she found it.", options: ["looked", "had looked", "was looking"], correct: "had looked" },
+                { sentence: "We ___ a lot before the trip.", options: ["practiced", "had practiced", "were practicing"], correct: "had practiced" },
+                { sentence: "They ___ not eaten anything all day.", options: ["had", "have", "were"], correct: "had" },
+                { sentence: "After he ___ his studies, he travelled.", options: ["finished", "had finished", "was finishing"], correct: "had finished" },
+                { sentence: "___ you packed your bags before the flight?", options: ["Did", "Had", "Were"], correct: "Had" }
+            ],
+            papc: [ // Past Perfect Continuous
+                { sentence: "They ___ for an hour when the bus came.", options: ["wait", "had been waiting", "were waiting"], correct: "had been waiting" },
+                { sentence: "She was tired because she ___ all day.", options: ["work", "had been working", "was working"], correct: "had been working" },
+                { sentence: "He ___ for a long time when he finally found it.", options: ["searched", "had been searching", "was searching"], correct: "had been searching" },
+                { sentence: "How long ___ you been living there before you moved?", options: ["did", "had", "were"], correct: "had" },
+                { sentence: "The ground was wet. It ___ for hours.", options: ["rained", "had been raining", "was raining"], correct: "had been raining" },
+                { sentence: "I ___ English for five years before I moved to London.", options: ["learned", "had been learning", "was learning"], correct: "had been learning" },
+                { sentence: "He looked exhausted because he ___ since morning.", options: ["ran", "had been running", "was running"], correct: "had been running" },
+                { sentence: "She ___ not been feeling well for a week.", options: ["had", "has", "was"], correct: "had" },
+                { sentence: "They ___ about their plans all night.", options: ["talked", "had been talking", "were talking"], correct: "had been talking" },
+                { sentence: "We ___ that movie for two hours when it stopped.", options: ["watched", "had been watching", "were watching"], correct: "had been watching" }
+            ],
+            fs: [ // Future Simple
+                { sentence: "I ___ you tomorrow.", options: ["help", "will help", "am helping"], correct: "will help" },
+                { sentence: "It ___ rain next week.", options: ["is", "will", "will be"], correct: "will" },
+                { sentence: "She ___ not come to the party.", options: ["will", "won't", "isn't"], correct: "won't" },
+                { sentence: "___ you call me later?", options: ["Are", "Will", "Do"], correct: "Will" },
+                { sentence: "They ___ probably win the game.", options: ["win", "will win", "are winning"], correct: "will win" },
+                { sentence: "I think he ___ pass the exam.", options: ["pass", "will pass", "passes"], correct: "will pass" },
+                { sentence: "We ___ a new car next year.", options: ["buy", "will buy", "are buying"], correct: "will buy" },
+                { sentence: "She ___ likely be late.", options: ["is", "will", "won't"], correct: "will" },
+                { sentence: "They ___ not agree with us.", options: ["will", "won't", "don't"], correct: "won't" },
+                { sentence: "What ___ you do if you win the lottery?", options: ["do", "will", "are"], correct: "will" }
+            ],
+            fc: [ // Future Continuous
+                { sentence: "At 10 AM tomorrow, I ___.", options: ["work", "will be working", "am working"], correct: "will be working" },
+                { sentence: "This time next year, I ___ on a beach.", options: ["lie", "will be lying", "am lying"], correct: "will be lying" },
+                { sentence: "She ___ not be studying when you arrive.", options: ["will", "won't", "isn't"], correct: "won't" },
+                { sentence: "___ you be watching TV tonight?", options: ["Will", "Are", "Do"], correct: "Will" },
+                { sentence: "They ___ dinner at 7 PM.", options: ["will eat", "will be eating", "are eating"], correct: "will be eating" },
+                { sentence: "He ___ in the garden all afternoon.", options: ["will work", "will be working", "is working"], correct: "will be working" },
+                { sentence: "We ___ a meeting at this time tomorrow.", options: ["have", "will be having", "are having"], correct: "will be having" },
+                { sentence: "She ___ not be waiting for us.", options: ["will", "won't", "isn't"], correct: "won't" },
+                { sentence: "What ___ you be doing this weekend?", options: ["will", "are", "do"], correct: "will" },
+                { sentence: "I ___ home by midnight.", options: ["will drive", "will be driving", "am driving"], correct: "will be driving" }
+            ],
+            fp: [ // Future Perfect
+                { sentence: "By next year, I ___.", options: ["graduate", "will have graduated", "will graduate"], correct: "will have graduated" },
+                { sentence: "By 5 PM, she ___ her report.", options: ["finish", "will have finished", "will finish"], correct: "will have finished" },
+                { sentence: "They ___ not have arrived by midnight.", options: ["will", "won't", "don't"], correct: "won't" },
+                { sentence: "___ you have completed the task by Friday?", options: ["Will", "Have", "Are"], correct: "Will" },
+                { sentence: "He ___ the book by next month.", options: ["read", "will have read", "will read"], correct: "will have read" },
+                { sentence: "By the time you get home, I ___ dinner.", options: ["will cook", "will have cooked", "am cooking"], correct: "will have cooked" },
+                { sentence: "We ___ the project by the deadline.", options: ["will finish", "will have finished", "are finishing"], correct: "will have finished" },
+                { sentence: "She ___ not have left by then.", options: ["will", "won't", "isn't"], correct: "won't" },
+                { sentence: "How many books ___ you have read by the end of the year?", options: ["will", "do", "are"], correct: "will" },
+                { sentence: "The train ___ already left by the time we arrive.", options: ["will", "will have", "is"], correct: "will have" }
+            ],
+            fpc: [ // Future Perfect Continuous
+                { sentence: "By midnight, I ___ for five hours.", options: ["write", "will have been writing", "will write"], correct: "will have been writing" },
+                { sentence: "By next month, he ___ for ten years.", options: ["will be working", "will have been working", "has been working"], correct: "will have been working" },
+                { sentence: "She ___ not have been waiting long when you arrive.", options: ["will", "won't", "isn't"], correct: "won't" },
+                { sentence: "How long ___ you have been learning by the time you graduate?", options: ["will", "have", "are"], correct: "will" },
+                { sentence: "By 2030, we ___ in this house for twenty years.", options: ["will live", "will have been living", "are living"], correct: "will have been living" },
+                { sentence: "They ___ by the time you get there.", options: ["will still be arguing", "will have been arguing", "are arguing"], correct: "will have been arguing" },
+                { sentence: "I ___ this report for three days by Friday.", options: ["will write", "will have been writing", "am writing"], correct: "will have been writing" },
+                { sentence: "He ___ not have been running for two hours by then.", options: ["will", "won't", "isn't"], correct: "won't" },
+                { sentence: "They ___ for a long time when the news finally comes.", options: ["will wait", "will have been waiting", "are waiting"], correct: "will have been waiting" },
+                { sentence: "By the end of the month, she ___ for this company for five years.", options: ["will work", "will have been working", "works"], correct: "will have been working" }
+            ]
+        };
+
+        let currentScores = {};
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const allTabsContainers = document.querySelectorAll('.tabs');
+
+            allTabsContainers.forEach(tabsContainer => {
+                const tenseId = tabsContainer.dataset.tense;
+                currentScores[tenseId] = { correct: 0, total: 0 };
+
+                const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
+                const tabContents = tabsContainer.querySelectorAll('.tab-content');
+                const exerciseArea = tabsContainer.querySelector(`.exercise-area[data-tense="${tenseId}"]`);
+                const resultArea = tabsContainer.querySelector(`[data-result-area="${tenseId}"]`);
+                const resetButton = resultArea.querySelector('.reset-button');
+
+                tabButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        const tabName = button.dataset.tab;
+
+                        tabButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        tabContents.forEach(content => {
+                            if (content.dataset.tabContent === tabName) {
+                                content.classList.remove('hidden');
+                                if (tabName === 'trainer') {
+                                    renderExercises(tenseId, exerciseArea, resultArea);
+                                }
+                            } else {
+                                content.classList.add('hidden');
+                            }
+                        });
+                    });
+                });
+
+                resetButton.addEventListener('click', () => {
+                    resetExercise(tenseId, exerciseArea, resultArea);
+                });
+            });
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                });
+            });
+        });
+
+        function renderExercises(tenseId, exerciseArea, resultArea) {
+            exerciseArea.innerHTML = '';
+            resultArea.classList.add('hidden');
+            currentScores[tenseId] = { correct: 0, total: 0 };
+
+            if (!exercises[tenseId] || exercises[tenseId].length === 0) {
+                exerciseArea.innerHTML = '<p class="text-[#6E6E6E]">Упражнения для этого времени пока не добавлены.</p>';
+                return;
+            }
+
+            exercises[tenseId].forEach((exercise, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('mb-4', 'p-4', 'border', 'border-[#A69B8F]/30', 'rounded-md', 'bg-gray-50');
+                questionDiv.innerHTML = `
+                    <p class="font-semibold mb-3">${index + 1}. ${exercise.sentence.replace('___', '<span class="text-[#E6A473]">___</span>')}</p>
+                    <div class="options space-y-2">
+                        ${exercise.options.map((option, optIndex) => `
+                            <label class="block cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors">
+                                <input type="radio" name="q${tenseId}-${index}" value="${option}" class="mr-2 accent-[#E6A473]">
+                                ${option}
+                            </label>
+                        `).join('')}
+                    </div>
+                    <div class="feedback mt-2 text-sm"></div>
+                `;
+                exerciseArea.appendChild(questionDiv);
+            });
+
+            const checkButton = document.createElement('button');
+            checkButton.classList.add('bg-[#E6A473]', 'text-white', 'py-2', 'px-4', 'rounded-md', 'hover:bg-[#D59463]', 'transition-colors', 'block', 'w-full', 'mt-4');
+            checkButton.textContent = 'Проверить ответы';
+            checkButton.addEventListener('click', () => checkAnswers(tenseId, exerciseArea, resultArea));
+            exerciseArea.appendChild(checkButton);
+        }
+
+        function checkAnswers(tenseId, exerciseArea, resultArea) {
+            let correctCount = 0;
+            let totalCount = 0;
+
+            exercises[tenseId].forEach((exercise, index) => {
+                const questionDiv = exerciseArea.children[index];
+                const selectedOption = questionDiv.querySelector(`input[name="q${tenseId}-${index}"]:checked`);
+                const feedbackDiv = questionDiv.querySelector('.feedback');
+                const optionsDiv = questionDiv.querySelector('.options');
+                
+                optionsDiv.querySelectorAll('input').forEach(input => input.disabled = true); // Disable inputs after check
+
+                if (selectedOption) {
+                    totalCount++;
+                    if (selectedOption.value === exercise.correct) {
+                        feedbackDiv.innerHTML = '<span class="correct-answer">&#10003; Правильно!</span>';
+                        correctCount++;
+                    } else {
+                        feedbackDiv.innerHTML = `<span class="wrong-answer">&#10007; Неправильно. Правильный ответ: ${exercise.correct}</span>`;
+                    }
+                } else {
+                    feedbackDiv.innerHTML = '<span class="wrong-answer">&#10007; Выберите ответ. Правильный ответ: ' + exercise.correct + '</span>';
+                }
+            });
+
+            currentScores[tenseId].correct = correctCount;
+            currentScores[tenseId].total = totalCount;
+            updateResultArea(tenseId, resultArea);
+            resultArea.classList.remove('hidden');
+            exerciseArea.querySelector('button').classList.add('hidden'); // Hide check button after showing results
+        }
+
+        function updateResultArea(tenseId, resultArea) {
+            resultArea.querySelector('.correct-count').textContent = currentScores[tenseId].correct;
+            resultArea.querySelector('.total-count').textContent = currentScores[tenseId].total;
+        }
+
+        function resetExercise(tenseId, exerciseArea, resultArea) {
+            renderExercises(tenseId, exerciseArea, resultArea);
+        }
+    </script>
+</body>
+</html>
