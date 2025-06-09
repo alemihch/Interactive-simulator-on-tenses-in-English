@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm & Harmonious -->
-    <!-- Application Structure Plan: The application uses a thematic, section-based structure, grouping tenses into Present, Past, and Future categories. This is a standard and intuitive pedagogical approach. A sticky navigation bar allows for quick scrolling. Each tense is presented on an interactive card with internal tabs for "Rules," "Usage & Signals," "Examples," and "Trainer." This design breaks down complex information into digestible, user-controlled chunks, promoting active learning over passive reading and preventing information overload, which is superior to a static table for this type of content. -->
-    <!-- Visualization & Content Choices: Goal: Organize, Inform & Engage. Method: Structured HTML/CSS with Tailwind for a card-based layout and interactive forms. Interaction: Clickable tabs within each card switch between content panes (Rules, Usage, Examples, Trainer). The Trainer tab contains multiple-choice questions with dynamic feedback and score tracking. Justification: Since the source data is textual and rule-based, traditional charts are inappropriate. The interactive card/tab model is the most effective way to organize this layered information, allowing users to drill down into specifics as needed. The addition of interactive exercises directly addresses the need for practical application of grammar rules. Library/Method: Vanilla JS for interactions and exercise logic. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- Application Structure Plan: The application uses a thematic, section-based structure, grouping tenses into Present, Past, and Future categories. This standard pedagogical approach, combined with a sticky navigation bar, allows for intuitive exploration. Each tense is presented on an interactive card with internal tabs for "Rules," "Usage & Signals," "Examples," and an enhanced "Trainer" with sequential multiple-choice questions, navigation, and score tracking with detailed error reporting. This multi-layered design breaks down complex information into digestible, interactive, and user-controlled chunks, promoting active, personalized learning and preventing information overload, which is superior to a static table for this type of content. -->
+    <!-- Visualization & Content Choices: Goal: Organize, Inform, Engage & Assess. Method: Structured HTML/CSS with Tailwind for a responsive, card-based layout and interactive forms. Interaction: Clickable tabs within each card switch between content panes (Rules, Usage, Examples, Trainer). The individual Trainer tabs feature sequential multiple-choice questions with dynamic feedback, navigation buttons, and detailed score summaries including incorrect answers. Justification: Since the source data is textual and rule-based, traditional charts are inappropriate. The interactive card/tab model is the most effective way to organize this layered information. The addition of robust interactive exercises with sequential navigation and comprehensive feedback directly addresses the need for practical application, reinforcement, and personalized practice of grammar rules. Library/Method: Vanilla JS for all interactions and exercise logic. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -19,7 +19,7 @@
             color: #3D3D3D;
         }
         .tab-btn {
-            @apply py-2 px-4 font-semibold text-[#6E6E6E] hover:text-[#E6A473] transition-colors;
+            @apply py-2 px-6 font-semibold text-[#6E6E6E] hover:text-[#E6A473] transition-colors;
         }
         .tab-btn.active {
             background-color: #E6A473;
@@ -31,12 +31,15 @@
             transition: all 0.3s ease-in-out;
         }
         .correct-answer {
-            color: #16A34A; /* Tailwind green-600 */
+            color: #16A34A;
             font-weight: bold;
         }
         .wrong-answer {
-            color: #DC2626; /* Tailwind red-600 */
+            color: #DC2626;
             font-weight: bold;
+        }
+        .trainer-nav-btn {
+            @apply bg-[#A69B8F] text-white py-2 px-4 rounded-md hover:bg-[#8B7F74] transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
         }
     </style>
 </head>
@@ -66,7 +69,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Present Simple</h3>
                         <div class="tabs" data-tense="ps">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -87,16 +90,17 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                 <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>I <span class="font-semibold text-[#3D3D3D]">work</span> every day.</li>
-                                    <li>She <span class="font-semibold text-[#3D3D3D]">drinks</span> coffee.</li>
-                                    <li>The sun <span class="font-semibold text-[#3D3D3D]">rises</span> in the East.</li>
+                                    <li>Утверждение: I <span class="font-semibold text-[#3D3D3D]">work</span> every day.</li>
+                                    <li>Отрицание: She <span class="font-semibold text-[#3D3D3D]">doesn't drink</span> coffee.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Do</span> you <span class="font-semibold text-[#3D3D3D]">work</span>?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="ps"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="ps">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -105,7 +109,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Present Continuous</h3>
                          <div class="tabs" data-tense="pc">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -114,7 +118,7 @@
                             <div class="tab-content" data-tab-content="rules">
                                 <ul class="space-y-3">
                                     <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + am/is/are + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + am/is/are not + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + am/is/are + not + Ving</li>
                                     <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Am/Is/Are + S + Ving?</li>
                                 </ul>
                             </div>
@@ -126,15 +130,17 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                 <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>I <span class="font-semibold text-[#3D3D3D]">am working</span> now.</li>
-                                    <li>They <span class="font-semibold text-[#3D3D3D]">are studying</span> for an exam this week.</li>
+                                    <li>Утверждение: I <span class="font-semibold text-[#3D3D3D]">am working</span> now.</li>
+                                    <li>Отрицание: They <span class="font-semibold text-[#3D3D3D]">aren't studying</span> for an exam.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Are</span> you <span class="font-semibold text-[#3D3D3D]">working</span>?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="pc"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="pc">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -143,7 +149,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Present Perfect</h3>
                         <div class="tabs" data-tense="pp">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -152,7 +158,7 @@
                             <div class="tab-content" data-tab-content="rules">
                                 <ul class="space-y-3">
                                     <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + have/has + V3</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + have/has not + V3</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + have not (haven't)/has not (hasn't) + V3</li>
                                     <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Have/Has + S + V3?</li>
                                 </ul>
                             </div>
@@ -164,15 +170,17 @@
                             </div>
                              <div class="tab-content hidden" data-tab-content="examples">
                                 <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>I <span class="font-semibold text-[#3D3D3D]">have finished</span> my homework.</li>
-                                    <li>She <span class="font-semibold text-[#3D3D3D]">has lived</span> here for five years.</li>
+                                    <li>Утверждение: I <span class="font-semibold text-[#3D3D3D]">have finished</span> my homework.</li>
+                                    <li>Отрицание: She <span class="font-semibold text-[#3D3D3D]">hasn't lived</span> here long.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Have</span> you <span class="font-semibold text-[#3D3D3D]">finished</span>?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="pp"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="pp">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -181,7 +189,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Present Perfect Continuous</h3>
                         <div class="tabs" data-tense="ppc">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -190,7 +198,7 @@
                             <div class="tab-content" data-tab-content="rules">
                                <ul class="space-y-3">
                                     <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + have/has been + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + have/has not been + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + have not (haven't)/has not (hasn't) + been + Ving</li>
                                     <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Have/Has + S + been + Ving?</li>
                                 </ul>
                             </div>
@@ -202,15 +210,17 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                 <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>I <span class="font-semibold text-[#3D3D3D]">have been studying</span> for three hours.</li>
-                                    <li>It <span class="font-semibold text-[#3D3D3D]">has been raining</span> all day.</li>
+                                    <li>Утверждение: I <span class="font-semibold text-[#3D3D3D]">have been studying</span> for three hours.</li>
+                                    <li>Отрицание: It <span class="font-semibold text-[#3D3D3D]">hasn't been raining</span>.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Have</span> they <span class="font-semibold text-[#3D3D3D]">been waiting</span>?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="ppc"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="ppc">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -226,7 +236,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Past Simple</h3>
                         <div class="tabs" data-tense="pas">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -247,15 +257,17 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>I <span class="font-semibold text-[#3D3D3D]">went</span> to the cinema yesterday.</li>
-                                    <li>She <span class="font-semibold text-[#3D3D3D]">called</span> me last night.</li>
+                                    <li>Утверждение: I <span class="font-semibold text-[#3D3D3D]">went</span> to the cinema yesterday.</li>
+                                    <li>Отрицание: She <span class="font-semibold text-[#3D3D3D]">didn't call</span> me last night.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Did</span> you <span class="font-semibold text-[#3D3D3D]">go</span>?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="pas"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="pas">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -264,7 +276,7 @@
                      <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Past Continuous</h3>
                         <div class="tabs" data-tense="pac">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -285,15 +297,17 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>I <span class="font-semibold text-[#3D3D3D]">was reading</span> when she called.</li>
-                                    <li>They <span class="font-semibold text-[#3D3D3D]">were playing</span> while I was cooking.</li>
+                                    <li>Утверждение: I <span class="font-semibold text-[#3D3D3D]">was reading</span> when she called.</li>
+                                    <li>Отрицание: They <span class="font-semibold text-[#3D3D3D]">weren't playing</span> while I was cooking.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Were</span> you <span class="font-semibold text-[#3D3D3D]">reading</span>?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="pac"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="pac">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -302,7 +316,7 @@
                      <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Past Perfect</h3>
                         <div class="tabs" data-tense="pap">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -323,15 +337,17 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>I <span class="font-semibold text-[#3D3D3D]">had finished</span> my work before he arrived.</li>
-                                    <li>She <span class="font-semibold text-[#3D3D3D]">had never seen</span> a tiger until she went to Africa.</li>
+                                    <li>Утверждение: I <span class="font-semibold text-[#3D3D3D]">had finished</span> my work before he arrived.</li>
+                                    <li>Отрицание: She <span class="font-semibold text-[#3D3D3D]">hadn't seen</span> a tiger until she went to Africa.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Had</span> he <span class="font-semibold text-[#3D3D3D]">arrived</span>?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="pap"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="pap">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -340,7 +356,7 @@
                      <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Past Perfect Continuous</h3>
                         <div class="tabs" data-tense="papc">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -355,20 +371,23 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
-                                <p class="mb-4 text-[#6E6E6E]">Действие, которое длилось до определенного момента в прошлом.</p>
+                                <p class="mb-4 text-[#6E6E6E]">Действие, которое длилось в течение какого-то времени до определенного момента в прошлом.</p>
                                 <h4 class="font-bold mb-2">Слова-сигналы:</h4>
                                 <p class="text-[#6E6E6E]">for, since.</p>
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>They <span class="font-semibold text-[#3D3D3D]">had been waiting</span> for an hour when the bus finally came.</li>
+                                    <li>Утверждение: They <span class="font-semibold text-[#3D3D3D]">had been waiting</span> for an hour when the bus finally came.</li>
+                                    <li>Отрицание: He <span class="font-semibold text-[#3D3D3D]">hadn't been working</span> for long when he got tired.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Had</span> you <span class="font-semibold text-[#3D3D3D]">been waiting</span> long?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="papc"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="papc">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -376,7 +395,7 @@
                 </div>
             </section>
             
-            <section id="future" class="scroll-mt-24">
+            <section id="future" class="scroll-mt-24 mb-16">
                 <h2 class="text-3xl font-bold mb-6 border-l-4 border-[#E6A473] pl-4">Будущие времена (Future Tenses)</h2>
                 <p class="mb-8 text-[#6E6E6E] max-w-4xl">Эта группа времен используется для разговора о будущем. С их помощью можно делать прогнозы, говорить о планах, спонтанных решениях, а также описывать действия, которые будут в процессе или завершатся к определенному моменту в будущем.</p>
                 <div class="grid md:grid-cols-2 gap-8">
@@ -384,7 +403,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Future Simple</h3>
                         <div class="tabs" data-tense="fs">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -401,19 +420,21 @@
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
                                 <p class="mb-4 text-[#6E6E6E]">Предсказания, обещания, спонтанные решения, действия в будущем без плана.</p>
                                 <h4 class="font-bold mb-2">Слова-сигналы:</h4>
-                                <p class="text-[#6E6E6E]">tomorrow, next week/year, in the future.</p>
+                                <p class="text-[#6E6E6E]">tomorrow, next week/month/year, in the future.</p>
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>I <span class="font-semibold text-[#3D3D3D]">will help</span> you.</li>
-                                    <li>It <span class="font-semibold text-[#3D3D3D]">will rain</span> tomorrow.</li>
+                                    <li>Утверждение: I <span class="font-semibold text-[#3D3D3D]">will help</span> you.</li>
+                                    <li>Отрицание: It <span class="font-semibold text-[#3D3D3D]">won't rain</span> tomorrow.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Will</span> she <span class="font-semibold text-[#3D3D3D]">come</span>?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="fs"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="fs">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -422,7 +443,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Future Continuous</h3>
                         <div class="tabs" data-tense="fc">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -431,7 +452,7 @@
                             <div class="tab-content" data-tab-content="rules">
                                <ul class="space-y-3">
                                     <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will be + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not be + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not (won't) + be + Ving</li>
                                     <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + be + Ving?</li>
                                 </ul>
                             </div>
@@ -443,14 +464,17 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>At 10 AM tomorrow, I <span class="font-semibold text-[#3D3D3D]">will be working</span>.</li>
+                                    <li>Утверждение: At 10 AM tomorrow, I <span class="font-semibold text-[#3D3D3D]">will be working</span>.</li>
+                                    <li>Отрицание: She <span class="font-semibold text-[#3D3D3D]">won't be studying</span> when you arrive.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Will</span> you <span class="font-semibold text-[#3D3D3D]">be watching</span> TV tonight?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="fc"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="fc">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -459,7 +483,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Future Perfect</h3>
                         <div class="tabs" data-tense="fp">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -468,7 +492,7 @@
                             <div class="tab-content" data-tab-content="rules">
                                <ul class="space-y-3">
                                     <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will have + V3</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not have + V3</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not (won't) + have + V3</li>
                                     <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + have + V3?</li>
                                 </ul>
                             </div>
@@ -480,14 +504,17 @@
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>By next year, I <span class="font-semibold text-[#3D3D3D]">will have graduated</span>.</li>
+                                    <li>Утверждение: By next year, I <span class="font-semibold text-[#3D3D3D]">will have graduated</span>.</li>
+                                    <li>Отрицание: She <span class="font-semibold text-[#3D3D3D]">won't have finished</span> her report by 5 PM.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Will</span> you <span class="font-semibold text-[#3D3D3D]">have completed</span> the task by Friday?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="fp"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="fp">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -496,7 +523,7 @@
                     <div class="tense-card bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-2xl font-bold mb-4">Future Perfect Continuous</h3>
                         <div class="tabs" data-tense="fpc">
-                            <div class="flex border-b mb-4">
+                            <div class="flex border-b mb-4 space-x-4">
                                 <button class="tab-btn active text-sm sm:text-base" data-tab="rules">Правила</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="usage">Использование</button>
                                 <button class="tab-btn text-sm sm:text-base" data-tab="examples">Примеры</button>
@@ -505,26 +532,29 @@
                             <div class="tab-content" data-tab-content="rules">
                                <ul class="space-y-3">
                                     <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will have been + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not have been + Ving</li>
+                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not (won't) + have been + Ving</li>
                                     <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + have been + Ving?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
-                                <p class="mb-4 text-[#6E6E6E]">Действие, которое будет длиться до определенного момента в будущем.</p>
+                                <p class="mb-4 text-[#6E6E6E]">Действие, которое будет длиться в течение какого-то времени до определенного момента в будущем.</p>
                                 <h4 class="font-bold mb-2">Слова-сигналы:</h4>
                                 <p class="text-[#6E6E6E]">for (duration) by (future time).</p>
                             </div>
                             <div class="tab-content hidden" data-tab-content="examples">
                                <ul class="space-y-2 list-disc list-inside text-[#6E6E6E]">
-                                    <li>By midnight, I <span class="font-semibold text-[#3D3D3D]">will have been writing</span> for five hours.</li>
+                                    <li>Утверждение: By midnight, I <span class="font-semibold text-[#3D3D3D]">will have been writing</span> for five hours.</li>
+                                    <li>Отрицание: She <span class="font-semibold text-[#3D3D3D]">won't have been waiting</span> long when you arrive.</li>
+                                    <li>Вопрос: <span class="font-semibold text-[#3D3D3D]">Will</span> you <span class="font-semibold text-[#3D3D3D]">have been learning</span> by then?</li>
                                 </ul>
                             </div>
                             <div class="tab-content hidden" data-tab-content="trainer">
                                 <div class="exercise-area" data-tense="fpc"></div>
                                 <div class="text-center mt-4 hidden" data-result-area="fpc">
                                     <p class="text-xl font-bold mb-2"><span class="correct-count">0</span>/<span class="total-count">0</span> правильных ответов</p>
-                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors">Повторить</button>
+                                    <ul class="error-list text-left text-red-600 text-sm mt-4"></ul>
+                                    <button class="reset-button bg-[#E6A473] text-white py-2 px-4 rounded-md hover:bg-[#D59463] transition-colors mt-4">Повторить</button>
                                 </div>
                             </div>
                         </div>
@@ -540,154 +570,651 @@
     </div>
 
     <script>
-        const exercises = {
-            ps: [ // Present Simple
-                { sentence: "She usually ___ coffee in the morning.", options: ["drink", "drinks", "drinking"], correct: "drinks" },
-                { sentence: "They ___ to school every day.", options: ["go", "goes", "going"], correct: "go" },
-                { sentence: "He never ___ meat.", options: ["eat", "eats", "eating"], correct: "eats" },
-                { sentence: "We ___ TV in the evening.", options: ["watch", "watches", "watching"], correct: "watch" },
-                { sentence: "The sun ___ in the East.", options: ["rise", "rises", "rising"], correct: "rises" },
-                { sentence: "My brother ___ sports.", options: ["like", "likes", "liking"], correct: "likes" },
-                { sentence: "I ___ a student.", options: ["am", "is", "are"], correct: "am" },
-                { sentence: "Cats ___ mice.", options: ["catch", "catches", "catching"], correct: "catch" },
-                { sentence: "Does she ___ in a big city?", options: ["live", "lives", "living"], correct: "live" },
-                { sentence: "They ___ speak English.", options: ["do not", "does not", "is not"], correct: "do not" }
-            ],
-            pc: [ // Present Continuous
-                { sentence: "I ___ a book right now.", options: ["read", "am reading", "reads"], correct: "am reading" },
-                { sentence: "They ___ for an exam this week.", options: ["study", "are studying", "studies"], correct: "are studying" },
-                { sentence: "She ___ not sleeping at the moment.", options: ["is", "are", "am"], correct: "is" },
-                { sentence: "___ you listening to me?", options: ["Am", "Is", "Are"], correct: "Are" },
-                { sentence: "He ___ dinner tonight.", options: ["cooks", "is cooking", "cook"], correct: "is cooking" },
-                { sentence: "The children ___ in the park.", options: ["play", "are playing", "plays"], correct: "are playing" },
-                { sentence: "We ___ a new project currently.", options: ["work on", "are working on", "works on"], correct: "are working on" },
-                { sentence: "Look! It ___ outside.", options: ["rains", "is raining", "rain"], correct: "is raining" },
-                { sentence: "Why ___ you smiling?", options: ["are", "is", "am"], correct: "are" },
-                { sentence: "I ___ not going out tonight.", options: ["am", "is", "are"], correct: "am" }
-            ],
-            pp: [ // Present Perfect
-                { sentence: "I ___ my homework already.", options: ["finish", "have finished", "has finished"], correct: "have finished" },
-                { sentence: "She ___ here for five years.", options: ["lives", "has lived", "is living"], correct: "has lived" },
-                { sentence: "They ___ never seen a tiger.", options: ["have", "has", "had"], correct: "have" },
-                { sentence: "___ you ever been to Paris?", options: ["Are", "Have", "Has"], correct: "Have" },
-                { sentence: "He ___ just arrived.", options: ["have", "has", "is"], correct: "has" },
-                { sentence: "We ___ not eaten yet.", options: ["did", "have", "are"], correct: "have" },
-                { sentence: "My sister ___ a new car recently.", options: ["bought", "has bought", "buys"], correct: "has bought" },
-                { sentence: "How long ___ you known him?", options: ["do", "have", "are"], correct: "have" },
-                { sentence: "She ___ finished her report.", options: ["have not", "has not", "did not"], correct: "has not" },
-                { sentence: "I ___ already drunk my coffee.", options: ["have", "has", "am"], correct: "have" }
-            ],
-            ppc: [ // Present Perfect Continuous
-                { sentence: "I ___ for three hours.", options: ["study", "have been studying", "has been studying"], correct: "have been studying" },
-                { sentence: "It ___ all day.", options: ["rains", "has been raining", "is raining"], correct: "has been raining" },
-                { sentence: "They ___ for an hour.", options: ["wait", "have been waiting", "are waiting"], correct: "have been waiting" },
-                { sentence: "How long ___ you been learning English?", options: ["have", "has", "are"], correct: "have" },
-                { sentence: "She ___ not been feeling well lately.", options: ["have", "has", "is"], correct: "has" },
-                { sentence: "He ___ since morning.", options: ["sleeps", "has been sleeping", "is sleeping"], correct: "has been sleeping" },
-                { sentence: "We ___ on this project for months.", options: ["are working", "have been working", "work"], correct: "have been working" },
-                { sentence: "The children ___ since noon.", options: ["play", "are playing", "have been playing"], correct: "have been playing" },
-                { sentence: "What ___ you been doing?", options: ["have", "are", "do"], correct: "have" },
-                { sentence: "It ___ snowing for two hours.", options: ["is", "has been", "was"], correct: "has been" }
-            ],
-            pas: [ // Past Simple
-                { sentence: "I ___ to the cinema yesterday.", options: ["go", "went", "gone"], correct: "went" },
-                { sentence: "She ___ me last night.", options: ["call", "called", "calling"], correct: "called" },
-                { sentence: "They ___ not come to the party.", options: ["did", "do", "were"], correct: "did" },
-                { sentence: "___ you finish your work?", options: ["Do", "Did", "Have"], correct: "Did" },
-                { sentence: "He ___ a new car two days ago.", options: ["buy", "bought", "buys"], correct: "bought" },
-                { sentence: "We ___ happy to see them.", options: ["are", "were", "was"], correct: "were" },
-                { sentence: "She ___ English at university.", options: ["study", "studied", "studies"], correct: "studied" },
-                { sentence: "My parents ___ in 1990.", options: ["marry", "married", "marries"], correct: "married" },
-                { sentence: "Where ___ you go last summer?", options: ["do", "did", "have"], correct: "did" },
-                { sentence: "I ___ him for the first time then.", options: ["met", "meet", "meeting"], correct: "met" }
-            ],
-            pac: [ // Past Continuous
-                { sentence: "I ___ when she called.", options: ["read", "was reading", "am reading"], correct: "was reading" },
-                { sentence: "They ___ while I was cooking.", options: ["played", "were playing", "are playing"], correct: "were playing" },
-                { sentence: "She ___ not sleeping at 10 PM yesterday.", options: ["was", "were", "is"], correct: "was" },
-                { sentence: "___ you watching TV at that moment?", options: ["Was", "Were", "Are"], correct: "Were" },
-                { sentence: "He ___ dinner when the phone rang.", options: ["cooked", "was cooking", "is cooking"], correct: "was cooking" },
-                { sentence: "The children ___ in the garden all morning.", options: ["play", "were playing", "are playing"], correct: "were playing" },
-                { sentence: "While I ___ to music, my phone rang.", options: ["listened", "was listening", "am listening"], correct: "was listening" },
-                { sentence: "What ___ you doing at 3 PM?", options: ["was", "were", "are"], correct: "were" },
-                { sentence: "They ___ not paying attention.", options: ["was", "were", "are"], correct: "were" },
-                { sentence: "The sun ___ brightly when we left.", options: ["shone", "was shining", "is shining"], correct: "was shining" }
-            ],
-            pap: [ // Past Perfect
-                { sentence: "I ___ my work before he arrived.", options: ["finish", "had finished", "finished"], correct: "had finished" },
-                { sentence: "She ___ never seen a tiger until then.", options: ["has", "had", "was"], correct: "had" },
-                { sentence: "They ___ already left when I got there.", options: ["have", "had", "were"], correct: "had" },
-                { sentence: "By the time we arrived, the movie ___.", options: ["started", "had started", "was starting"], correct: "had started" },
-                { sentence: "He realized he ___ his keys at home.", options: ["left", "had left", "has left"], correct: "had left" },
-                { sentence: "She ___ for two hours before she found it.", options: ["looked", "had looked", "was looking"], correct: "had looked" },
-                { sentence: "We ___ a lot before the trip.", options: ["practiced", "had practiced", "were practicing"], correct: "had practiced" },
-                { sentence: "They ___ not eaten anything all day.", options: ["had", "have", "were"], correct: "had" },
-                { sentence: "After he ___ his studies, he travelled.", options: ["finished", "had finished", "was finishing"], correct: "had finished" },
-                { sentence: "___ you packed your bags before the flight?", options: ["Did", "Had", "Were"], correct: "Had" }
-            ],
-            papc: [ // Past Perfect Continuous
-                { sentence: "They ___ for an hour when the bus came.", options: ["wait", "had been waiting", "were waiting"], correct: "had been waiting" },
-                { sentence: "She was tired because she ___ all day.", options: ["work", "had been working", "was working"], correct: "had been working" },
-                { sentence: "He ___ for a long time when he finally found it.", options: ["searched", "had been searching", "was searching"], correct: "had been searching" },
-                { sentence: "How long ___ you been living there before you moved?", options: ["did", "had", "were"], correct: "had" },
-                { sentence: "The ground was wet. It ___ for hours.", options: ["rained", "had been raining", "was raining"], correct: "had been raining" },
-                { sentence: "I ___ English for five years before I moved to London.", options: ["learned", "had been learning", "was learning"], correct: "had been learning" },
-                { sentence: "He looked exhausted because he ___ since morning.", options: ["ran", "had been running", "was running"], correct: "had been running" },
-                { sentence: "She ___ not been feeling well for a week.", options: ["had", "has", "was"], correct: "had" },
-                { sentence: "They ___ about their plans all night.", options: ["talked", "had been talking", "were talking"], correct: "had been talking" },
-                { sentence: "We ___ that movie for two hours when it stopped.", options: ["watched", "had been watching", "were watching"], correct: "had been watching" }
-            ],
-            fs: [ // Future Simple
-                { sentence: "I ___ you tomorrow.", options: ["help", "will help", "am helping"], correct: "will help" },
-                { sentence: "It ___ rain next week.", options: ["is", "will", "will be"], correct: "will" },
-                { sentence: "She ___ not come to the party.", options: ["will", "won't", "isn't"], correct: "won't" },
-                { sentence: "___ you call me later?", options: ["Are", "Will", "Do"], correct: "Will" },
-                { sentence: "They ___ probably win the game.", options: ["win", "will win", "are winning"], correct: "will win" },
-                { sentence: "I think he ___ pass the exam.", options: ["pass", "will pass", "passes"], correct: "will pass" },
-                { sentence: "We ___ a new car next year.", options: ["buy", "will buy", "are buying"], correct: "will buy" },
-                { sentence: "She ___ likely be late.", options: ["is", "will", "won't"], correct: "will" },
-                { sentence: "They ___ not agree with us.", options: ["will", "won't", "don't"], correct: "won't" },
-                { sentence: "What ___ you do if you win the lottery?", options: ["do", "will", "are"], correct: "will" }
-            ],
-            fc: [ // Future Continuous
-                { sentence: "At 10 AM tomorrow, I ___.", options: ["work", "will be working", "am working"], correct: "will be working" },
-                { sentence: "This time next year, I ___ on a beach.", options: ["lie", "will be lying", "am lying"], correct: "will be lying" },
-                { sentence: "She ___ not be studying when you arrive.", options: ["will", "won't", "isn't"], correct: "won't" },
-                { sentence: "___ you be watching TV tonight?", options: ["Will", "Are", "Do"], correct: "Will" },
-                { sentence: "They ___ dinner at 7 PM.", options: ["will eat", "will be eating", "are eating"], correct: "will be eating" },
-                { sentence: "He ___ in the garden all afternoon.", options: ["will work", "will be working", "is working"], correct: "will be working" },
-                { sentence: "We ___ a meeting at this time tomorrow.", options: ["have", "will be having", "are having"], correct: "will be having" },
-                { sentence: "She ___ not be waiting for us.", options: ["will", "won't", "isn't"], correct: "won't" },
-                { sentence: "What ___ you be doing this weekend?", options: ["will", "are", "do"], correct: "will" },
-                { sentence: "I ___ home by midnight.", options: ["will drive", "will be driving", "am driving"], correct: "will be driving" }
-            ],
-            fp: [ // Future Perfect
-                { sentence: "By next year, I ___.", options: ["graduate", "will have graduated", "will graduate"], correct: "will have graduated" },
-                { sentence: "By 5 PM, she ___ her report.", options: ["finish", "will have finished", "will finish"], correct: "will have finished" },
-                { sentence: "They ___ not have arrived by midnight.", options: ["will", "won't", "don't"], correct: "won't" },
-                { sentence: "___ you have completed the task by Friday?", options: ["Will", "Have", "Are"], correct: "Will" },
-                { sentence: "He ___ the book by next month.", options: ["read", "will have read", "will read"], correct: "will have read" },
-                { sentence: "By the time you get home, I ___ dinner.", options: ["will cook", "will have cooked", "am cooking"], correct: "will have cooked" },
-                { sentence: "We ___ the project by the deadline.", options: ["will finish", "will have finished", "are finishing"], correct: "will have finished" },
-                { sentence: "She ___ not have left by then.", options: ["will", "won't", "isn't"], correct: "won't" },
-                { sentence: "How many books ___ you have read by the end of the year?", options: ["will", "do", "are"], correct: "will" },
-                { sentence: "The train ___ already left by the time we arrive.", options: ["will", "will have", "is"], correct: "will have" }
-            ],
-            fpc: [ // Future Perfect Continuous
-                { sentence: "By midnight, I ___ for five hours.", options: ["write", "will have been writing", "will write"], correct: "will have been writing" },
-                { sentence: "By next month, he ___ for ten years.", options: ["will be working", "will have been working", "has been working"], correct: "will have been working" },
-                { sentence: "She ___ not have been waiting long when you arrive.", options: ["will", "won't", "isn't"], correct: "won't" },
-                { sentence: "How long ___ you have been learning by the time you graduate?", options: ["will", "have", "are"], correct: "will" },
-                { sentence: "By 2030, we ___ in this house for twenty years.", options: ["will live", "will have been living", "are living"], correct: "will have been living" },
-                { sentence: "They ___ by the time you get there.", options: ["will still be arguing", "will have been arguing", "are arguing"], correct: "will have been arguing" },
-                { sentence: "I ___ this report for three days by Friday.", options: ["will write", "will have been writing", "am writing"], correct: "will have been writing" },
-                { sentence: "He ___ not have been running for two hours by then.", options: ["will", "won't", "isn't"], correct: "won't" },
-                { sentence: "They ___ for a long time when the news finally comes.", options: ["will wait", "will have been waiting", "are waiting"], correct: "will have been waiting" },
-                { sentence: "By the end of the month, she ___ for this company for five years.", options: ["will work", "will have been working", "works"], correct: "will have been working" }
-            ]
+        const allExercises = {
+            ps: {
+                affirmative: [
+                    { s: "She usually ___ coffee in the morning.", options: ["drink", "drinks", "drinking"], c: "drinks" },
+                    { s: "They ___ to school every day.", options: ["go", "goes", "going"], c: "go" },
+                    { s: "He never ___ meat.", options: ["eat", "eats", "eating"], c: "eats" },
+                    { s: "We ___ TV in the evening.", options: ["watch", "watches", "watching"], c: "watch" },
+                    { s: "The sun ___ in the East.", options: ["rise", "rises", "rising"], c: "rises" },
+                    { s: "My brother ___ sports.", options: ["like", "likes", "liking"], c: "likes" },
+                    { s: "I ___ a student.", options: ["am", "is", "are"], c: "am" },
+                    { s: "Cats ___ mice.", options: ["catch", "catches", "catching"], c: "catch" },
+                    { s: "The earth ___ around the sun.", options: ["revolve", "revolves", "revolving"], c: "revolves" },
+                    { s: "Birds ___ in the sky.", options: ["fly", "flies", "flying"], c: "fly" },
+                    { s: "He ___ his teeth twice a day.", options: ["brush", "brushes", "brushing"], c: "brushes" },
+                    { s: "We ___ breakfast at 8 AM.", options: ["have", "has", "having"], c: "have" },
+                    { s: "I ___ a book every week.", options: ["read", "reads", "reading"], c: "read" },
+                    { s: "My parents ___ in a small town.", options: ["live", "lives", "living"], c: "live" },
+                    { s: "He always ___ his homework.", options: ["do", "does", "doing"], c: "does" }
+                ],
+                negative: [
+                    { s: "They ___ speak English.", options: ["do not", "does not", "is not"], c: "do not speak" },
+                    { s: "She ___ not listen to loud music.", options: ["do not listen", "does not listen", "is not listening"], c: "does not listen" },
+                    { s: "He ___ not like coffee.", options: ["do not like", "does not like", "is not liking"], c: "does not like" },
+                    { s: "I ___ not watch horror movies.", options: ["do not watch", "does not watch", "am not watching"], c: "do not watch" },
+                    { s: "They ___ usually travel in winter.", options: ["do not travel", "does not travel", "are not traveling"], c: "do not travel" },
+                    { s: "She ___ not play video games.", options: ["do not play", "does not play", "is not playing"], c: "does not play" },
+                    { s: "We ___ not go out much.", options: ["do not go", "does not go", "are not going"], c: "do not go" },
+                    { s: "She ___ not work on Sundays.", options: ["do not work", "does not work", "is not working"], c: "does not work" },
+                    { s: "They ___ not listen to rock music.", options: ["do not listen", "does not listen", "are not listening"], c: "do not listen" },
+                    { s: "He ___ not remember me.", options: ["do not remember", "does not remember", "is not remembering"], c: "does not remember" },
+                    { s: "It ___ not happen often.", options: ["do not happen", "does not happen", "is not happening"], c: "does not happen" },
+                    { s: "I ___ not believe him.", options: ["do not believe", "does not believe", "am not believing"], c: "do not believe" },
+                    { s: "We ___ not understand this.", options: ["do not understand", "does not understand", "are not understanding"], c: "do not understand" },
+                    { s: "He ___ not smoke.", options: ["do not smoke", "does not smoke", "is not smoking"], c: "does not smoke" },
+                    { s: "She ___ not speak French.", options: ["do not speak", "does not speak", "is not speaking"], c: "does not speak" }
+                ],
+                interrogative: [
+                    { s: "___ you work?", options: ["Do", "Does", "Are"], c: "Do you work" },
+                    { s: "___ she play tennis?", options: ["Do", "Does", "Is"], c: "Does she play" },
+                    { s: "___ birds fly?", options: ["Do", "Does", "Are"], c: "Do birds fly" },
+                    { s: "___ it snow often in winter?", options: ["Do", "Does", "Is"], c: "Does it snow" },
+                    { s: "___ your sister attend school?", options: ["Do", "Does", "Is"], c: "Does your sister attend" },
+                    { s: "___ you speak English?", options: ["Do", "Does", "Are"], c: "Do you speak" },
+                    { s: "___ they play football?", options: ["Do", "Does", "Are"], c: "Do they play" },
+                    { s: "___ she get up early?", options: ["Do", "Does", "Is"], c: "Does she get up" },
+                    { s: "___ you call your parents often?", options: ["Do", "Does", "Are"], c: "Do you call" },
+                    { s: "___ she live in a big house?", options: ["Do", "Does", "Is"], c: "Does she live" },
+                    { s: "___ he like pizza?", options: ["Do", "Does", "Is"], c: "Does he like" },
+                    { s: "___ they understand the rules?", options: ["Do", "Does", "Are"], c: "Do they understand" },
+                    { s: "___ he drive to work?", options: ["Do", "Does", "Is"], c: "Does he drive" },
+                    { s: "___ you watch movies?", options: ["Do", "Does", "Are"], c: "Do you watch" },
+                    { s: "___ she usually wear glasses?", options: ["Do", "Does", "Is"], c: "Does she usually wear" }
+                ]
+            },
+            pc: {
+                affirmative: [
+                    { s: "I ___ a book right now.", options: ["read", "am reading", "reads"], c: "am reading" },
+                    { s: "They ___ for an exam this week.", options: ["study", "are studying", "studies"], c: "are studying" },
+                    { s: "He ___ dinner tonight.", options: ["cooks", "is cooking", "cook"], c: "is cooking" },
+                    { s: "The children ___ in the park.", options: ["play", "are playing", "plays"], c: "are playing" },
+                    { s: "We ___ a new project currently.", options: ["work on", "are working on", "works on"], c: "are working on" },
+                    { s: "Look! It ___ outside.", options: ["rains", "is raining", "rain"], c: "is raining" },
+                    { s: "The baby ___ in the cot.", options: ["sleep", "is sleeping", "sleeps"], c: "is sleeping" },
+                    { s: "They ___ lunch at the cafeteria.", options: ["have", "are having", "has"], c: "are having" },
+                    { s: "My parents ___ me next week.", options: ["visit", "are visiting", "visits"], c: "are visiting" },
+                    { s: "The students ___ hard for their exams.", options: ["work", "are working", "works"], c: "are working" },
+                    { s: "She ___ at the moment.", options: ["sing", "is singing", "sings"], c: "is singing" },
+                    { s: "He ___ his car.", options: ["repair", "is repairing", "repairs"], c: "is repairing" },
+                    { s: "The sun ___ brightly.", options: ["shine", "is shining", "shines"], c: "is shining" },
+                    { s: "The chef ___ a new dish.", options: ["prepare", "is preparing", "prepares"], c: "is preparing" },
+                    { s: "I ___ my emails.", options: ["check", "am checking", "checks"], c: "am checking" }
+                ],
+                negative: [
+                    { s: "She ___ not sleeping at the moment.", options: ["is not sleeping", "are not sleeping", "am not sleeping"], c: "is not sleeping" },
+                    { s: "I ___ not going out tonight.", options: ["am not going", "is not going", "are not going"], c: "am not going" },
+                    { s: "He ___ not watching TV now.", options: ["is not watching", "are not watching", "am not watching"], c: "is not watching" },
+                    { s: "I ___ not feeling well today.", options: ["am not feeling", "is not feeling", "are not feeling"], c: "am not feeling" },
+                    { s: "It ___ not snowing anymore.", options: ["is not snowing", "are not snowing", "am not snowing"], c: "is not snowing" },
+                    { s: "I ___ not going on holiday this year.", options: ["am not going", "is not going", "are not going"], c: "am not going" },
+                    { s: "They ___ not talking to each other.", options: ["are not talking", "is not talking", "am not talking"], c: "are not talking" },
+                    { s: "He ___ not listening to the radio.", options: ["is not listening", "are not listening", "am not listening"], c: "is not listening" },
+                    { s: "I ___ not wearing a jacket.", options: ["am not wearing", "is not wearing", "are not wearing"], c: "am not wearing" },
+                    { s: "We ___ not watching the news.", options: ["are not watching", "is not watching", "am not watching"], c: "are not watching" },
+                    { s: "She ___ not drawing now.", options: ["is not drawing", "are not drawing", "am not drawing"], c: "is not drawing" },
+                    { s: "You ___ not listening to me!", options: ["are not listening", "is not listening", "am not listening"], c: "are not listening" },
+                    { s: "He ___ not sleeping at the moment.", options: ["is not sleeping", "are not sleeping", "am not sleeping"], c: "is not sleeping" },
+                    { s: "The cat ___ not playing with the ball.", options: ["is not playing", "are not playing", "am not playing"], c: "is not playing" },
+                    { s: "We ___ not coming to the party.", options: ["are not coming", "is not coming", "am not coming"], c: "are not coming" }
+                ],
+                interrogative: [
+                    { s: "___ you listening to me?", options: ["Am you listening", "Is you listening", "Are you listening"], c: "Are you listening" },
+                    { s: "___ she coming to the party?", options: ["Am she coming", "Is she coming", "Are she coming"], c: "Is she coming" },
+                    { s: "___ they playing football?", options: ["Am they playing", "Is they playing", "Are they playing"], c: "Are they playing" },
+                    { s: "___ he reading that interesting book?", options: ["Am he reading", "Is he reading", "Are he reading"], c: "Is he reading" },
+                    { s: "___ they having fun?", options: ["Am they having", "Is they having", "Are they having"], c: "Are they having" },
+                    { s: "___ you studying English now?", options: ["Am you studying", "Is you studying", "Are you studying"], c: "Are you studying" },
+                    { s: "___ the birds singing?", options: ["Am the birds singing", "Is the birds singing", "Are the birds singing"], c: "Are the birds singing" },
+                    { s: "___ he eating breakfast?", options: ["Am he eating", "Is he eating", "Are he eating"], c: "Is he eating" },
+                    { s: "___ you enjoying the movie?", options: ["Am you enjoying", "Is you enjoying", "Are you enjoying"], c: "Are you enjoying" },
+                    { s: "___ she walking her dog?", options: ["Am she walking", "Is she walking", "Are she walking"], c: "Is she walking" },
+                    { s: "___ we going to the cinema?", options: ["Am we going", "Is we going", "Are we going"], c: "Are we going" },
+                    { s: "___ it raining outside?", options: ["Am it raining", "Is it raining", "Are it raining"], c: "Is it raining" },
+                    { s: "___ they waiting for us?", options: ["Am they waiting", "Is they waiting", "Are they waiting"], c: "Are they waiting" },
+                    { s: "___ he talking on the phone?", options: ["Am he talking", "Is he talking", "Are he talking"], c: "Is he talking" },
+                    { s: "___ you feeling better?", options: ["Am you feeling", "Is you feeling", "Are you feeling"], c: "Are you feeling" }
+                ]
+            },
+            pp: {
+                affirmative: [
+                    { s: "I ___ my homework already.", options: ["finish", "have finished", "has finished"], c: "have finished" },
+                    { s: "She ___ here for five years.", options: ["lives", "has lived", "is living"], c: "has lived" },
+                    { s: "He ___ just arrived.", options: ["have", "has", "is"], c: "has just arrived" },
+                    { s: "They ___ all the food.", options: ["eat", "have eaten", "has eaten"], c: "have eaten" },
+                    { s: "My sister ___ a new car recently.", options: ["bought", "has bought", "buys"], c: "has bought" },
+                    { s: "He ___ a new job.", options: ["find", "has found", "found"], c: "has found" },
+                    { s: "I ___ already drunk my coffee.", options: ["have", "has", "am"], c: "have already drunk" },
+                    { s: "The postman ___ yet.", options: ["arrive", "has arrived", "arrived"], c: "has arrived" },
+                    { s: "He ___ the news.", options: ["read", "has read", "reads"], c: "has read" },
+                    { s: "My brother ___ his leg.", options: ["break", "has broken", "broke"], c: "has broken" },
+                    { s: "She ___ to Paris twice.", options: ["is", "has been", "was"], c: "has been" },
+                    { s: "The company ___ recently launched a new product.", options: ["launch", "has launched", "launched"], c: "has launched" },
+                    { s: "I ___ my phone.", options: ["charge", "have charged", "has charged"], c: "have charged" },
+                    { s: "They ___ the game.", options: ["win", "have won", "has won"], c: "have won" },
+                    { s: "He ___ his new job.", options: ["start", "has started", "started"], c: "has started" }
+                ],
+                negative: [
+                    { s: "She ___ here long.", options: ["haven't lived", "hasn't lived", "isn't living"], c: "hasn't lived" },
+                    { s: "He ___ not seen that movie yet.", options: ["has not seen", "have not seen", "did not see"], c: "has not seen" },
+                    { s: "We ___ not eaten yet.", options: ["did not eat", "have not eaten", "are not eating"], c: "have not eaten" },
+                    { s: "It ___ rained this week.", options: ["haven't rained", "hasn't rained", "didn't rain"], c: "hasn't rained" },
+                    { s: "We ___ not visited that museum.", options: ["haven't visited", "hasn't visited", "didn't visit"], c: "have not visited" },
+                    { s: "She ___ finished her report.", options: ["haven't finished", "hasn't finished", "didn't finish"], c: "has not finished" },
+                    { s: "I ___ seen her since 2020.", options: ["haven't seen", "hasn't seen", "didn't see"], c: "haven't seen" },
+                    { s: "It ___ since morning.", options: ["haven't stopped", "hasn't stopped", "didn't stop"], c: "has not stopped" },
+                    { s: "We ___ not cleaned the house.", options: ["haven't cleaned", "hasn't cleaned", "didn't clean"], c: "have not cleaned" },
+                    { s: "He ___ not finished his meal.", options: ["haven't finished", "hasn't finished", "didn't finish"], c: "has not finished" },
+                    { s: "I ___ received any emails.", options: ["haven't received", "hasn't received", "didn't receive"], c: "have not received" },
+                    { s: "You ___ told me the truth.", options: ["haven't told", "hasn't told", "didn't tell"], c: "haven't told" },
+                    { s: "She ___ done her homework.", options: ["haven't done", "hasn't done", "didn't do"], c: "hasn't done" },
+                    { s: "My car ___ down.", options: ["haven't broken", "hasn't broken", "didn't break"], c: "hasn't broken" },
+                    { s: "They ___ not bought a new car.", options: ["haven't bought", "hasn't bought", "didn't buy"], c: "haven't bought" }
+                ],
+                interrogative: [
+                    { s: "___ you finished?", options: ["Have", "Has", "Did"], c: "Have you finished" },
+                    { s: "___ you ever been to Paris?", options: ["Are you ever been", "Have you ever been", "Has you ever been"], c: "Have you ever been" },
+                    { s: "___ she eaten breakfast?", options: ["Has she eaten", "Have she eaten", "Did she eat"], c: "Has she eaten" },
+                    { s: "___ they found their keys?", options: ["Have they found", "Has they found", "Did they find"], c: "Have they found" },
+                    { s: "How long ___ you known him?", options: ["do you know", "have you known", "did you know"], c: "have you known" },
+                    { s: "___ she seen this movie?", options: ["Has she seen", "Have she seen", "Did she see"], c: "Has she seen" },
+                    { s: "___ you done your chores?", options: ["Have you done", "Has you done", "Did you do"], c: "Have you done" },
+                    { s: "___ he written his essay?", options: ["Has he written", "Have he written", "Did he write"], c: "Has he written" },
+                    { s: "___ you ever flown in a helicopter?", options: ["Have you ever flown", "Has you ever flown", "Did you ever fly"], c: "Have you ever flown" },
+                    { s: "___ she prepared for the presentation?", options: ["Has she prepared", "Have she prepared", "Did she prepare"], c: "Has she prepared" },
+                    { s: "___ he left already?", options: ["Has he left", "Have he left", "Did he leave"], c: "Has he left" },
+                    { s: "___ she read that book?", options: ["Has she read", "Have she read", "Did she read"], c: "Has she read" },
+                    { s: "___ we met before?", options: ["Have we met", "Has we met", "Did we meet"], c: "Have we met" },
+                    { s: "___ he fixed the car?", options: ["Has he fixed", "Have he fixed", "Did he fix"], c: "Has he fixed" },
+                    { s: "___ they eaten all the cake?", options: ["Have they eaten", "Has they eaten", "Did they eat"], c: "Have they eaten" }
+                ]
+            },
+            ppc: {
+                affirmative: [
+                    { s: "I ___ for three hours.", options: ["study", "have been studying", "has been studying"], c: "have been studying" },
+                    { s: "It ___ all day.", options: ["rains", "has been raining", "is raining"], c: "has been raining" },
+                    { s: "They ___ for an hour.", options: ["wait", "have been waiting", "are waiting"], c: "have been waiting" },
+                    { s: "She ___ working all day.", options: ["has been", "have been", "is"], c: "has been working" },
+                    { s: "The children ___ outside since morning.", options: ["play", "have been playing", "are playing"], c: "have been playing" },
+                    { s: "He ___ since morning.", options: ["sleeps", "has been sleeping", "is sleeping"], c: "has been sleeping" },
+                    { s: "We ___ on this project for months.", options: ["are working", "have been working", "work"], c: "have been working" },
+                    { s: "My eyes hurt because I ___ all night.", options: ["read", "have been reading", "am reading"], c: "have been reading" },
+                    { s: "The dog ___ for an hour.", options: ["barks", "has been barking", "is barking"], c: "has been barking" },
+                    { s: "She ___ preparing dinner since 5 PM.", options: ["prepares", "has been preparing", "is preparing"], c: "has been preparing" },
+                    { s: "He ___ for that company for ten years.", options: ["works", "has been working", "is working"], c: "has been working" },
+                    { s: "They ___ video games for five hours.", options: ["play", "have been playing", "are playing"], c: "have been playing" },
+                    { s: "My back hurts because I ___ in the garden.", options: ["dig", "have been digging", "am digging"], c: "have been digging" },
+                    { s: "The builders ___ on the house all year.", options: ["work", "have been working", "are working"], c: "have been working" },
+                    { s: "The cat ___ with the toy.", options: ["plays", "has been playing", "is playing"], c: "has been playing" }
+                ],
+                negative: [
+                    { s: "It ___ raining.", options: ["haven't been raining", "hasn't been raining", "isn't raining"], c: "hasn't been raining" },
+                    { s: "We ___ feeling well lately.", options: ["haven't been feeling", "hasn't been feeling", "aren't feeling"], c: "haven't been feeling" },
+                    { s: "He ___ practicing enough.", options: ["haven't been practicing", "hasn't been practicing", "isn't practicing"], c: "hasn't been practicing" },
+                    { s: "They ___ listening to the teacher.", options: ["haven't been listening", "hasn't been listening", "aren't listening"], c: "haven't been listening" },
+                    { s: "I ___ sleeping well.", options: ["haven't been sleeping", "hasn't been sleeping", "am not sleeping"], c: "haven't been sleeping" },
+                    { s: "We ___ running a lot.", options: ["haven't been running", "hasn't been running", "aren't running"], c: "haven't been running" },
+                    { s: "She ___ teaching for long.", options: ["haven't been teaching", "hasn't been teaching", "isn't teaching"], c: "hasn't been teaching" },
+                    { s: "He ___ sleeping well.", options: ["haven't been sleeping", "hasn't been sleeping", "isn't sleeping"], c: "hasn't been sleeping" },
+                    { s: "You ___ listening to me.", options: ["haven't been listening", "hasn't been listening", "aren't listening"], c: "haven't been listening" },
+                    { s: "We ___ studying for long.", options: ["haven't been studying", "hasn't been studying", "aren't studying"], c: "haven't been studying" },
+                    { s: "He ___ attending classes.", options: ["haven't been attending", "hasn't been attending", "isn't attending"], c: "hasn't been attending" },
+                    { s: "I ___ eating well.", options: ["haven't been eating", "hasn't been eating", "am not eating"], c: "haven't been eating" },
+                    { s: "She ___ practicing the piano.", options: ["haven't been practicing", "hasn't been practicing", "isn't practicing"], c: "hasn't been practicing" },
+                    { s: "They ___ watching TV.", options: ["haven't been watching", "hasn't been watching", "aren't watching"], c: "haven't been watching" },
+                    { s: "We ___ doing well.", options: ["haven't been doing", "hasn't been doing", "aren't doing"], c: "haven't been doing" }
+                ],
+                interrogative: [
+                    { s: "___ they been waiting?", options: ["Have they been waiting", "Has they been waiting", "Are they waiting"], c: "Have they been waiting" },
+                    { s: "___ he been trying to call you?", options: ["Have he been trying", "Has he been trying", "Is he trying"], c: "Has he been trying" },
+                    { s: "___ you been learning English for a long time?", options: ["Have you been learning", "Has you been learning", "Are you learning"], c: "Have you been learning" },
+                    { s: "___ it been snowing since yesterday?", options: ["Have it been snowing", "Has it been snowing", "Is it snowing"], c: "Has it been snowing" },
+                    { s: "___ we been doing this wrong?", options: ["Have we been doing", "Has we been doing", "Are we doing"], c: "Have we been doing" },
+                    { s: "How long ___ he been living there?", options: ["has he been living", "have he been living", "is he living"], c: "has he been living" },
+                    { s: "___ they been arguing?", options: ["Have they been arguing", "Has they been arguing", "Are they arguing"], c: "Have they been arguing" },
+                    { s: "___ he been reading?", options: ["Has he been reading", "Have he been reading", "Is he reading"], c: "Has he been reading" },
+                    { s: "___ she been traveling a lot?", options: ["Has she been traveling", "Have she been traveling", "Is she traveling"], c: "Has she been traveling" },
+                    { s: "___ you been feeling alright?", options: ["Have you been feeling", "Has you been feeling", "Are you feeling"], c: "Have you been feeling" },
+                    { s: "___ it been raining for days?", options: ["Has it been raining", "Have it been raining", "Is it raining"], c: "Has it been raining" },
+                    { s: "___ he been watching TV?", options: ["Has he been watching", "Have he been watching", "Is he watching"], c: "Has he been watching" },
+                    { s: "___ they been talking about me?", options: ["Have they been talking", "Has they been talking", "Are they talking"], c: "Have they been talking" },
+                    { s: "___ she been cooking all morning?", options: ["Has she been cooking", "Have she been cooking", "Is she cooking"], c: "Has she been cooking" },
+                    { s: "___ you been cleaning your room?", options: ["Have you been cleaning", "Has you been cleaning", "Are you cleaning"], c: "Have you been cleaning" }
+                ]
+            },
+            pas: {
+                affirmative: [
+                    { s: "I ___ to the cinema yesterday.", options: ["go", "went", "gone"], c: "went" },
+                    { s: "She ___ me last night.", options: ["call", "called", "calling"], c: "called" },
+                    { s: "He ___ a new car two days ago.", options: ["buy", "bought", "buys"], c: "bought" },
+                    { s: "We ___ happy to see them.", options: ["are", "were", "was"], c: "were" },
+                    { s: "She ___ English at university.", options: ["study", "studied", "studies"], c: "studied" },
+                    { s: "My parents ___ in 1990.", options: ["marry", "married", "marries"], c: "married" },
+                    { s: "I ___ him for the first time then.", options: ["meet", "met", "meeting"], c: "met" },
+                    { s: "They ___ a great time at the concert.", options: ["have", "had", "having"], c: "had" },
+                    { s: "We ___ pizza for dinner.", options: ["eat", "ate", "eaten"], c: "ate" },
+                    { s: "She ___ her keys.", options: ["lose", "lost", "losing"], c: "lost" },
+                    { s: "He ___ in London for five years.", options: ["live", "lived", "living"], c: "lived" },
+                    { s: "They ___ the competition.", options: ["win", "won", "winning"], c: "won" },
+                    { s: "She ___ a doctor.", options: ["is", "was", "be"], c: "was" },
+                    { s: "The movie ___ at 7 PM.", options: ["start", "started", "starting"], c: "started" },
+                    { s: "I ___ my homework.", options: ["finish", "finished", "finishing"], c: "finished" }
+                ],
+                negative: [
+                    { s: "They ___ not come to the party.", options: ["did not come", "do not come", "were not coming"], c: "did not come" },
+                    { s: "He ___ not want to go.", options: ["did not want", "does not want", "was not wanting"], c: "did not want" },
+                    { s: "I ___ not see anything.", options: ["did not see", "do not see", "was not seeing"], c: "did not see" },
+                    { s: "She ___ not answer my question.", options: ["did not answer", "does not answer", "was not answering"], c: "did not answer" },
+                    { s: "My car ___ not start this morning.", options: ["did not start", "does not start", "was not starting"], c: "did not start" },
+                    { s: "He ___ not understand the lesson.", options: ["did not understand", "does not understand", "was not understanding"], c: "did not understand" },
+                    { s: "They ___ not like the movie.", options: ["did not like", "do not like", "were not liking"], c: "did not like" },
+                    { s: "I ___ not sleep well last night.", options: ["did not sleep", "do not sleep", "was not sleeping"], c: "did not sleep" },
+                    { s: "They ___ not go to the beach.", options: ["did not go", "do not go", "were not going"], c: "did not go" },
+                    { s: "We ___ not find the key.", options: ["did not find", "do not find", "were not finding"], c: "did not find" },
+                    { s: "She ___ not believe him.", options: ["did not believe", "does not believe", "was not believing"], c: "did not believe" },
+                    { s: "He ___ not finish his work.", options: ["did not finish", "does not finish", "was not finishing"], c: "did not finish" },
+                    { s: "We ___ not enjoy the food.", options: ["did not enjoy", "do not enjoy", "were not enjoying"], c: "did not enjoy" },
+                    { s: "They ___ not watch TV.", options: ["did not watch", "do not watch", "were not watching"], c: "did not watch" },
+                    { s: "I ___ not hear her.", options: ["did not hear", "do not hear", "was not hearing"], c: "did not hear" }
+                ],
+                interrogative: [
+                    { s: "___ you finish your work?", options: ["Do you finish", "Did you finish", "Have you finished"], c: "Did you finish" },
+                    { s: "___ you go last summer?", options: ["Do you go", "Did you go", "Have you gone"], c: "Did you go" },
+                    { s: "___ she like the present?", options: ["Do she like", "Did she like", "Has she liked"], c: "Did she like" },
+                    { s: "___ you call me?", options: ["Do you call", "Did you call", "Have you called"], c: "Did you call" },
+                    { s: "___ they arrive on time?", options: ["Do they arrive", "Did they arrive", "Have they arrived"], c: "Did they arrive" },
+                    { s: "___ he work yesterday?", options: ["Do he work", "Did he work", "Has he worked"], c: "Did he work" },
+                    { s: "___ you enjoy the party?", options: ["Do you enjoy", "Did you enjoy", "Have you enjoyed"], c: "Did you enjoy" },
+                    { s: "___ he buy a new phone?", options: ["Do he buy", "Did he buy", "Has he bought"], c: "Did he buy" },
+                    { s: "___ they visit their relatives?", options: ["Do they visit", "Did they visit", "Have they visited"], c: "Did they visit" },
+                    { s: "___ you see anything strange?", options: ["Do you see", "Did you see", "Have you seen"], c: "Did you see" },
+                    { s: "___ she see you?", options: ["Do she see", "Did she see", "Has she seen"], c: "Did she see" },
+                    { s: "___ he tell you the truth?", options: ["Do he tell", "Did he tell", "Has he told"], c: "Did he tell" },
+                    { s: "___ you eat breakfast?", options: ["Do you eat", "Did you eat", "Have you eaten"], c: "Did you eat" },
+                    { s: "___ they buy a new car?", options: ["Do they buy", "Did they buy", "Have they bought"], c: "Did they buy" },
+                    { s: "___ she play the piano?", options: ["Do she play", "Did she play", "Has she played"], c: "Did she play" }
+                ]
+            },
+            pac: {
+                affirmative: [
+                    { s: "I ___ when she called.", options: ["read", "was reading", "am reading"], c: "was reading" },
+                    { s: "They ___ while I was cooking.", options: ["played", "were playing", "are playing"], c: "were playing" },
+                    { s: "He ___ dinner when the phone rang.", options: ["cooked", "was cooking", "is cooking"], c: "was cooking" },
+                    { s: "The children ___ in the garden all morning.", options: ["play", "were playing", "are playing"], c: "were playing" },
+                    { s: "While I ___ to music, my phone rang.", options: ["listened", "was listening", "am listening"], c: "was listening" },
+                    { s: "The sun ___ brightly when we left.", options: ["shone", "was shining", "is shining"], c: "was shining" },
+                    { s: "She ___ a picture when I saw her.", options: ["drew", "was drawing", "is drawing"], c: "was drawing" },
+                    { s: "The dog ___ loudly.", options: ["barked", "was barking", "is barking"], c: "was barking" },
+                    { s: "I ___ breakfast when he arrived.", options: ["had", "was having", "am having"], c: "was having" },
+                    { s: "She ___ shopping when I called her.", options: ["went", "was going", "is going"], c: "was going" },
+                    { s: "He ___ on the phone.", options: ["talked", "was talking", "is talking"], c: "was talking" },
+                    { s: "The children ___ happily.", options: ["played", "were playing", "are playing"], c: "were playing" },
+                    { s: "She ___ her hair.", options: ["combed", "was combing", "is combing"], c: "was combing" },
+                    { s: "He ___ his car.", options: ["washed", "was washing", "is washing"], c: "was washing" },
+                    { s: "She ___ in the garden.", options: ["worked", "was working", "is working"], c: "was working" }
+                ],
+                negative: [
+                    { s: "She ___ not sleeping at 10 PM yesterday.", options: ["was not sleeping", "were not sleeping", "is not sleeping"], c: "was not sleeping" },
+                    { s: "They ___ not paying attention.", options: ["was not paying", "were not paying", "are not paying"], c: "were not paying" },
+                    { s: "We ___ not waiting for him.", options: ["was not waiting", "were not waiting", "are not waiting"], c: "were not waiting" },
+                    { s: "It ___ not raining at all.", options: ["was not raining", "were not raining", "is not raining"], c: "was not raining" },
+                    { s: "I ___ not sleeping at midnight.", options: ["was not sleeping", "were not sleeping", "am not sleeping"], c: "was not sleeping" },
+                    { s: "They ___ not talking to each other.", options: ["was not talking", "were not talking", "are not talking"], c: "were not talking" },
+                    { s: "I ___ not feeling well yesterday.", options: ["was not feeling", "were not feeling", "am not feeling"], c: "was not feeling" },
+                    { s: "We ___ not enjoying the party.", options: ["was not enjoying", "were not enjoying", "are not enjoying"], c: "were not enjoying" },
+                    { s: "She ___ not driving fast.", options: ["was not driving", "were not driving", "is not driving"], c: "was not driving" },
+                    { s: "They ___ not reading books.", options: ["was not reading", "were not reading", "are not reading"], c: "were not reading" },
+                    { s: "He ___ not listening to me.", options: ["was not listening", "were not listening", "is not listening"], c: "was not listening" },
+                    { s: "The children ___ not playing quietly.", options: ["was not playing", "were not playing", "are not playing"], c: "were not playing" },
+                    { s: "I ___ not watching TV.", options: ["was not watching", "were not watching", "am not watching"], c: "was not watching" },
+                    { s: "She ___ not wearing a coat.", options: ["was not wearing", "were not wearing", "is not wearing"], c: "was not wearing" },
+                    { s: "We ___ not singing then.", options: ["was not singing", "were not singing", "are not singing"], c: "were not singing" }
+                ],
+                interrogative: [
+                    { s: "___ you watching TV at that moment?", options: ["Was you watching", "Were you watching", "Are you watching"], c: "Were you watching" },
+                    { s: "What ___ you doing at 3 PM?", options: ["was you doing", "were you doing", "are you doing"], c: "were you doing" },
+                    { s: "___ he working on the project?", options: ["Was he working", "Were he working", "Is he working"], c: "Was he working" },
+                    { s: "___ she singing a song?", options: ["Was she singing", "Were she singing", "Is she singing"], c: "Was she singing" },
+                    { s: "___ you cleaning your room?", options: ["Was you cleaning", "Were you cleaning", "Are you cleaning"], c: "Were you cleaning" },
+                    { s: "___ she wearing a dress?", options: ["Was she wearing", "Were she wearing", "Is she wearing"], c: "Was she wearing" },
+                    { s: "___ he eating lunch?", options: ["Was he eating", "Were he eating", "Is he eating"], c: "Was he eating" },
+                    { s: "___ they eating lunch?", options: ["Was they eating", "Were they eating", "Are they eating"], c: "Were they eating" },
+                    { s: "___ you studying English?", options: ["Was you studying", "Were you studying", "Are you studying"], c: "Were you studying" },
+                    { s: "___ we making too much noise?", options: ["Was we making", "Were we making", "Are we making"], c: "Were we making" },
+                    { s: "___ she talking to her friend?", options: ["Was she talking", "Were she talking", "Is she talking"], c: "Was she talking" },
+                    { s: "___ they waiting for the bus?", options: ["Was they waiting", "Were they waiting", "Are they waiting"], c: "Were they waiting" },
+                    { s: "___ he watching the movie?", options: ["Was he watching", "Were he watching", "Is he watching"], c: "Was he watching" },
+                    { s: "___ you listening to music?", options: ["Was you listening", "Were you listening", "Are you listening"], c: "Were you listening" },
+                    { s: "___ the dog barking?", options: ["Was the dog barking", "Were the dog barking", "Is the dog barking"], c: "Was the dog barking" }
+                ]
+            },
+            pap: {
+                affirmative: [
+                    { s: "I ___ my work before he arrived.", options: ["finish", "had finished", "finished"], c: "had finished" },
+                    { s: "They ___ already left when I got there.", options: ["have", "had", "were"], c: "had already left" },
+                    { s: "By the time we arrived, the movie ___.", options: ["started", "had started", "was starting"], c: "had started" },
+                    { s: "He realized he ___ his keys at home.", options: ["left", "had left", "has left"], c: "had left" },
+                    { s: "She ___ for two hours before she found it.", options: ["looked", "had looked", "was looking"], c: "had looked" },
+                    { s: "We ___ a lot before the trip.", options: ["practiced", "had practiced", "were practicing"], c: "had practiced" },
+                    { s: "She ___ the answer before I asked.", options: ["knew", "had known", "has known"], c: "had known" },
+                    { s: "He ___ his phone before it rang.", options: ["charged", "had charged", "has charged"], c: "had charged" },
+                    { s: "I ___ the letter before he told me.", options: ["sent", "had sent", "have sent"], c: "had sent" },
+                    { s: "We ___ home by midnight.", options: ["arrived", "had arrived", "were arriving"], c: "had arrived" },
+                    { s: "By the time I woke up, the sun ___.", options: ["rose", "had risen", "was rising"], c: "had risen" },
+                    { s: "He ___ a new car before he sold his old one.", options: ["bought", "had bought", "has bought"], c: "had bought" },
+                    { s: "They ___ in Paris before they moved to Rome.", options: ["lived", "had lived", "were living"], c: "had lived" },
+                    { s: "He ___ the window before the storm.", options: ["closed", "had closed", "has closed"], c: "had closed" },
+                    { s: "We ___ about him.", options: ["forgot", "had forgotten", "have forgotten"], c: "had forgotten" }
+                ],
+                negative: [
+                    { s: "She ___ never seen a tiger until then.", options: ["has never seen", "had never seen", "was never seeing"], c: "had never seen" },
+                    { s: "They ___ not eaten anything all day.", options: ["had not eaten", "have not eaten", "did not eat"], c: "had not eaten" },
+                    { s: "We ___ not seen him for years.", options: ["had not seen", "have not seen", "did not see"], c: "had not seen" },
+                    { s: "She ___ not heard the news.", options: ["had not heard", "has not heard", "did not hear"], c: "had not heard" },
+                    { s: "It ___ rained for weeks.", options: ["had not rained", "has not rained", "did not rain"], c: "had not rained" },
+                    { s: "He ___ not met her before that day.", options: ["had not met", "has not met", "did not meet"], c: "had not met" },
+                    { s: "She ___ not done her chores.", options: ["had not done", "has not done", "did not do"], c: "had not done" },
+                    { s: "We ___ not left the house yet.", options: ["had not left", "have not left", "did not leave"], c: "had not left" },
+                    { s: "She ___ not cleaned the room.", options: ["had not cleaned", "has not cleaned", "did not clean"], c: "had not cleaned" },
+                    { s: "He ___ not finished his meal.", options: ["had not finished", "has not finished", "did not finish"], c: "had not finished" },
+                    { s: "I ___ not eaten anything.", options: ["had not eaten", "have not eaten", "did not eat"], c: "had not eaten" },
+                    { s: "They ___ not arrived yet.", options: ["had not arrived", "have not arrived", "did not arrive"], c: "had not arrived" },
+                    { s: "She ___ not told me about it.", options: ["had not told", "has not told", "did not tell"], c: "had not told" },
+                    { s: "He ___ not received the message.", options: ["had not received", "has not received", "did not receive"], c: "had not received" },
+                    { s: "We ___ not expected that.", options: ["had not expected", "have not expected", "did not expect"], c: "had not expected" }
+                ],
+                interrogative: [
+                    { s: "___ he arrived?", options: ["Had he arrived", "Has he arrived", "Did he arrive"], c: "Had he arrived" },
+                    { s: "___ you packed your bags before the flight?", options: ["Did you pack", "Had you packed", "Have you packed"], c: "Had you packed" },
+                    { s: "___ they eaten all the cake?", options: ["Did they eat", "Had they eaten", "Have they eaten"], c: "Had they eaten" },
+                    { s: "___ you finished your homework?", options: ["Did you finish", "Had you finished", "Have you finished"], c: "Had you finished" },
+                    { s: "___ he written his essay?", options: ["Did he write", "Had he written", "Has he written"], c: "Had he written" },
+                    { s: "___ she cooked dinner?", options: ["Did she cook", "Had she cooked", "Has she cooked"], c: "Had she cooked" },
+                    { s: "___ you seen that movie?", options: ["Did you see", "Had you seen", "Have you seen"], c: "Had you seen" },
+                    { s: "___ we met before this?", options: ["Did we meet", "Had we met", "Have we met"], c: "Had we met" },
+                    { s: "___ he bought the tickets?", options: ["Did he buy", "Had he bought", "Has he bought"], c: "Had he bought" },
+                    { s: "___ they finished dinner?", options: ["Did they finish", "Had they finished", "Have they finished"], c: "Had they finished" },
+                    { s: "___ she done her best?", options: ["Did she do", "Had she done", "Has she done"], c: "Had she done" },
+                    { s: "___ you read the book?", options: ["Did you read", "Had you read", "Have you read"], c: "Had you read" },
+                    { s: "___ he left already?", options: ["Did he leave", "Had he left", "Has he left"], c: "Had he left" },
+                    { s: "___ they seen that show?", options: ["Did they see", "Had they seen", "Have they seen"], c: "Had they seen" },
+                    { s: "___ you heard about it?", options: ["Did you hear", "Had you heard", "Have you heard"], c: "Had you heard" }
+                ]
+            },
+            papc: {
+                affirmative: [
+                    { s: "They ___ for an hour when the bus came.", options: ["wait", "had been waiting", "were waiting"], c: "had been waiting" },
+                    { s: "She was tired because she ___ all day.", options: ["work", "had been working", "was working"], c: "had been working" },
+                    { s: "He ___ for a long time when he finally found it.", options: ["searched", "had been searching", "was searching"], c: "had been searching" },
+                    { s: "The ground was wet. It ___ for hours.", options: ["rained", "had been raining", "was raining"], c: "had been raining" },
+                    { s: "I ___ English for five years before I moved to London.", options: ["learned", "had been learning", "was learning"], c: "had been learning" },
+                    { s: "He looked exhausted because he ___ since morning.", options: ["ran", "had been running", "was running"], c: "had been running" },
+                    { s: "Her eyes were red because she ___.", options: ["cried", "had been crying", "was crying"], c: "had been crying" },
+                    { s: "The children ___ outside all afternoon.", options: ["played", "had been playing", "were playing"], c: "had been playing" },
+                    { s: "I ___ for a while before I decided to call.", options: ["thought", "had been thinking", "was thinking"], c: "had been thinking" },
+                    { s: "They ___ for a long time when the police arrived.", options: ["argued", "had been arguing", "were arguing"], c: "had been arguing" },
+                    { s: "We ___ in that company for ten years when it closed.", options: ["worked", "had been working", "were working"], c: "had been working" },
+                    { s: "My phone battery died because I ___ it all day.", options: ["used", "had been using", "was using"], c: "had been using" },
+                    { s: "He ___ a new language for two years when he moved abroad.", options: ["learned", "had been learning", "was learning"], c: "had been learning" },
+                    { s: "The car was dirty because it ___.", options: ["drove", "had been driving", "was driving"], c: "had been driving" },
+                    { s: "The chef was exhausted because he ___ since early morning.", options: ["prepared", "had been preparing", "was preparing"], c: "had been preparing" }
+                ],
+                negative: [
+                    { s: "She ___ not been feeling well for a week.", options: ["had not been feeling", "has not been feeling", "was not feeling"], c: "had not been feeling" },
+                    { s: "He ___ not been sleeping well.", options: ["had not been sleeping", "has not been sleeping", "was not sleeping"], c: "had not been sleeping" },
+                    { s: "We ___ not been doing well.", options: ["had not been doing", "have not been doing", "were not doing"], c: "had not been doing" },
+                    { s: "You ___ not been listening to me.", options: ["had not been listening", "have not been listening", "were not listening"], c: "had not been listening" },
+                    { s: "She ___ not been teaching for long.", options: ["had not been teaching", "has not been teaching", "was not teaching"], c: "had not been teaching" },
+                    { s: "I ___ not been feeling hungry.", options: ["had not been feeling", "have not been feeling", "was not feeling"], c: "had not been feeling" },
+                    { s: "He ___ not been practicing enough.", options: ["had not been practicing", "has not been practicing", "was not practicing"], c: "had not been practicing" },
+                    { s: "They ___ not been talking about us.", options: ["had not been talking", "have not been talking", "were not talking"], c: "had not been talking" },
+                    { s: "She ___ not been paying attention.", options: ["had not been paying", "has not been paying", "was not paying"], c: "had not been paying" },
+                    { s: "We ___ not been waiting for long.", options: ["had not been waiting", "have not been waiting", "were not waiting"], c: "had not been waiting" },
+                    { s: "He ___ not been running for two hours.", options: ["had not been running", "has not been running", "was not running"], c: "had not been running" },
+                    { s: "The children ___ not been playing quietly.", options: ["had not been playing", "have not been playing", "were not playing"], c: "had not been playing" },
+                    { s: "I ___ not been eating healthy.", options: ["had not been eating", "have not been eating", "was not eating"], c: "had not been eating" },
+                    { s: "She ___ not been cleaning her room.", options: ["had not been cleaning", "has not been cleaning", "was not cleaning"], c: "had not been cleaning" },
+                    { s: "They ___ not been studying for long.", options: ["had not been studying", "have not been studying", "were not studying"], c: "had not been studying" }
+                ],
+                interrogative: [
+                    { s: "How long ___ you been living there before you moved?", options: ["did you live", "had you been living", "were you living"], c: "had you been living" },
+                    { s: "___ they been practicing for the concert?", options: ["Did they practice", "Had they been practicing", "Were they practicing"], c: "Had they been practicing" },
+                    { s: "___ you been studying before the exam?", options: ["Did you study", "Had you been studying", "Were you studying"], c: "Had you been studying" },
+                    { s: "___ he been working on his thesis?", options: ["Did he work", "Had he been working", "Was he working"], c: "Had he been working" },
+                    { s: "___ she been cooking all morning?", options: ["Did she cook", "Had she been cooking", "Was she cooking"], c: "Had she been cooking" },
+                    { s: "___ you been cleaning your room?", options: ["Did you clean", "Had you been cleaning", "Were you cleaning"], c: "Had you been cleaning" },
+                    { s: "___ he been watching TV?", options: ["Did he watch", "Had he been watching", "Was he watching"], c: "Had he been watching" },
+                    { s: "___ they been talking about me?", options: ["Did they talk", "Had they been talking", "Were they talking"], c: "Had they been talking" },
+                    { s: "___ she been teaching for a long time?", options: ["Did she teach", "Had she been teaching", "Was she teaching"], c: "Had she been teaching" },
+                    { s: "___ you been feeling tired?", options: ["Did you feel", "Had you been feeling", "Were you feeling"], c: "Had you been feeling" },
+                    { s: "___ he been running?", options: ["Did he run", "Had he been running", "Was he running"], c: "Had he been running" },
+                    { s: "___ it been raining for days?", options: ["Did it rain", "Had it been raining", "Was it raining"], c: "Had it been raining" },
+                    { s: "___ she been reading that novel?", options: ["Did she read", "Had she been reading", "Was she reading"], c: "Had she been reading" },
+                    { s: "___ they been hiking for hours?", options: ["Did they hike", "Had they been hiking", "Were they hiking"], c: "Had they been hiking" },
+                    { s: "___ he been complaining about his problems?", options: ["Did he complain", "Had he been complaining", "Was he complaining"], c: "Had he been complaining" }
+                ]
+            },
+            fs: {
+                affirmative: [
+                    { s: "I ___ you tomorrow.", options: ["help", "will help", "am helping"], c: "will help" },
+                    { s: "It ___ rain next week.", options: ["is", "will", "will be"], c: "will rain" },
+                    { s: "They ___ probably win the game.", options: ["win", "will win", "are winning"], c: "will win" },
+                    { s: "I think he ___ pass the exam.", options: ["pass", "will pass", "passes"], c: "will pass" },
+                    { s: "We ___ a new car next year.", options: ["buy", "will buy", "are buying"], c: "will buy" },
+                    { s: "He ___ his homework after dinner.", options: ["do", "will do", "does"], c: "will do" },
+                    { s: "The package ___ soon.", options: ["arrive", "will arrive", "arrives"], c: "will arrive" },
+                    { s: "I ___ you tomorrow.", options: ["see", "will see", "am seeing"], c: "will see" },
+                    { s: "She ___ a letter.", options: ["write", "will write", "writes"], c: "will write" },
+                    { s: "We ___ to the beach.", options: ["go", "will go", "are going"], c: "will go" },
+                    { s: "I ___ for you.", options: ["wait", "will wait", "am waiting"], c: "will wait" },
+                    { s: "She ___ her exams.", options: ["pass", "will pass", "passes"], c: "will pass" },
+                    { s: "We ___ a new house.", options: ["buy", "will buy", "are buying"], c: "will buy" },
+                    { s: "I ___ everything.", options: ["explain", "will explain", "explains"], c: "will explain" },
+                    { s: "She ___ her best.", options: ["do", "will do", "does"], c: "will do" }
+                ],
+                negative: [
+                    { s: "She ___ not come to the party.", options: ["will not come", "won't come", "isn't coming"], c: "will not come" },
+                    { s: "He ___ not be here next week.", options: ["will not be", "won't be", "isn't being"], c: "will not be" },
+                    { s: "They ___ not agree with us.", options: ["will not agree", "won't agree", "don't agree"], c: "will not agree" },
+                    { s: "We ___ not go out tonight.", options: ["will not go", "won't go", "aren't going"], c: "will not go" },
+                    { s: "He ___ not remember me.", options: ["will not remember", "won't remember", "doesn't remember"], c: "will not remember" },
+                    { s: "They ___ not finish on time.", options: ["will not finish", "won't finish", "don't finish"], c: "will not finish" },
+                    { s: "He ___ not come back.", options: ["will not come", "won't come", "doesn't come"], c: "will not come" },
+                    { s: "You ___ not believe what happened!", options: ["will not believe", "won't believe", "don't believe"], c: "will not believe" },
+                    { s: "She ___ not like this idea.", options: ["will not like", "won't like", "doesn't like"], c: "will not like" },
+                    { s: "They ___ not understand.", options: ["will not understand", "won't understand", "don't understand"], c: "will not understand" },
+                    { s: "I ___ not forget you.", options: ["will not forget", "won't forget", "don't forget"], c: "will not forget" },
+                    { s: "He ___ not find it.", options: ["will not find", "won't find", "doesn't find"], c: "will not find" },
+                    { s: "We ___ not win.", options: ["will not win", "won't win", "don't win"], c: "will not win" },
+                    { s: "They ___ not forgive him.", options: ["will not forgive", "won't forgive", "don't forgive"], c: "will not forgive" },
+                    { s: "She ___ not answer.", options: ["will not answer", "won't answer", "doesn't answer"], c: "will not answer" }
+                ],
+                interrogative: [
+                    { s: "___ you call me later?", options: ["Do you call", "Will you call", "Are you calling"], c: "Will you call" },
+                    { s: "What ___ you do if you win the lottery?", options: ["do you do", "will you do", "are you doing"], c: "will you do" },
+                    { s: "___ she come?", options: ["Do she come", "Will she come", "Is she coming"], c: "Will she come" },
+                    { s: "___ he help us?", options: ["Does he help", "Will he help", "Is he helping"], c: "Will he help" },
+                    { s: "___ she visit her parents?", options: ["Does she visit", "Will she visit", "Is she visiting"], c: "Will she visit" },
+                    { s: "___ he call you?", options: ["Does he call", "Will he call", "Is he calling"], c: "Will he call" },
+                    { s: "___ you be home for dinner?", options: ["Are you be", "Will you be", "Do you be"], c: "Will you be" },
+                    { s: "___ it be cold tomorrow?", options: ["Is it be", "Will it be", "Does it be"], c: "Will it be" },
+                    { s: "___ they call us?", options: ["Do they call", "Will they call", "Are they calling"], c: "Will they call" },
+                    { s: "___ we finish on time?", options: ["Do we finish", "Will we finish", "Are we finishing"], c: "Will we finish" },
+                    { s: "___ she agree?", options: ["Does she agree", "Will she agree", "Is she agreeing"], c: "Will she agree" },
+                    { s: "___ they play?", options: ["Do they play", "Will they play", "Are they playing"], c: "Will they play" },
+                    { s: "___ he sing?", options: ["Does he sing", "Will he sing", "Is he singing"], c: "Will he sing" },
+                    { s: "___ you wait for me?", options: ["Do you wait", "Will you wait", "Are you waiting"], c: "Will you wait" },
+                    { s: "___ she tell you?", options: ["Does she tell", "Will she tell", "Is she telling"], c: "Will she tell" }
+                ]
+            },
+            fc: {
+                affirmative: [
+                    { s: "At 10 AM tomorrow, I ___.", options: ["work", "will be working", "am working"], c: "will be working" },
+                    { s: "This time next year, I ___ on a beach.", options: ["lie", "will be lying", "am lying"], c: "will be lying" },
+                    { s: "They ___ dinner at 7 PM.", options: ["will eat", "will be eating", "are eating"], c: "will be eating" },
+                    { s: "He ___ in the garden all afternoon.", options: ["will work", "will be working", "is working"], c: "will be working" },
+                    { s: "We ___ a meeting at this time tomorrow.", options: ["have", "will be having", "are having"], c: "will be having" },
+                    { s: "He ___ his car tomorrow morning.", options: ["wash", "will be washing", "washes"], c: "will be washing" },
+                    { s: "We ___ for the bus in an hour.", options: ["wait", "will be waiting", "are waiting"], c: "will be waiting" },
+                    { s: "I ___ a book all evening.", options: ["read", "will be reading", "am reading"], c: "will be reading" },
+                    { s: "He ___ on his computer all day.", options: ["work", "will be working", "works"], c: "will be working" },
+                    { s: "The children ___ happily.", options: ["play", "will be playing", "plays"], c: "will be playing" },
+                    { s: "She ___ her presentation.", options: ["give", "will be giving", "gives"], c: "will be giving" },
+                    { s: "They ___ on the phone.", options: ["talk", "will be talking", "talks"], c: "will be talking" },
+                    { s: "I ___ in the library.", options: ["study", "will be studying", "studies"], c: "will be studying" },
+                    { s: "She ___ her homework.", options: ["do", "will be doing", "does"], c: "will be doing" },
+                    { s: "He ___ to his friend.", options: ["talk", "will be talking", "talks"], c: "will be talking" }
+                ],
+                negative: [
+                    { s: "She ___ not be studying when you arrive.", options: ["will not be studying", "won't be studying", "isn't studying"], c: "will not be studying" },
+                    { s: "She ___ not be waiting for us.", options: ["will not be waiting", "won't be waiting", "isn't waiting"], c: "will not be waiting" },
+                    { s: "He ___ not be sleeping at midnight.", options: ["will not be sleeping", "won't be sleeping", "isn't sleeping"], c: "will not be sleeping" },
+                    { s: "They ___ not be sleeping when we get there.", options: ["will not be sleeping", "won't be sleeping", "aren't sleeping"], c: "will not be sleeping" },
+                    { s: "She ___ not be singing at the concert.", options: ["will not be singing", "won't be singing", "isn't singing"], c: "will not be singing" },
+                    { s: "We ___ not be travelling next month.", options: ["will not be travelling", "won't be travelling", "aren't travelling"], c: "will not be travelling" },
+                    { s: "I ___ not be coming to the party.", options: ["will not be coming", "won't be coming", "am not coming"], c: "will not be coming" },
+                    { s: "He ___ not be listening to me.", options: ["will not be listening", "won't be listening", "isn't listening"], c: "will not be listening" },
+                    { s: "She ___ not be working on Sunday.", options: ["will not be working", "won't be working", "isn't working"], c: "will not be working" },
+                    { s: "I ___ not be working tomorrow.", options: ["will not be working", "won't be working", "am not working"], c: "will not be working" },
+                    { s: "He ___ not be driving fast.", options: ["will not be driving", "won't be driving", "isn't driving"], c: "will not be driving" },
+                    { s: "They ___ not be attending the meeting.", options: ["will not be attending", "won't be attending", "aren't attending"], c: "will not be attending" },
+                    { s: "You ___ not be laughing when you see this!", options: ["will not be laughing", "won't be laughing", "aren't laughing"], c: "will not be laughing" },
+                    { s: "They ___ not be reading books.", options: ["will not be reading", "won't be reading", "aren't reading"], c: "will not be reading" },
+                    { s: "We ___ not be having dinner together.", options: ["will not be having", "won't be having", "aren't having"], c: "will not be having" }
+                ],
+                interrogative: [
+                    { s: "___ you be watching TV tonight?", options: ["Will you be watching", "Are you watching", "Do you watch"], c: "Will you be watching" },
+                    { s: "What ___ you be doing this weekend?", options: ["will you be doing", "are you doing", "do you do"], c: "will you be doing" },
+                    { s: "___ she be visiting her family?", options: ["Will she be visiting", "Is she visiting", "Does she visit"], c: "Will she be visiting" },
+                    { s: "___ they be playing golf?", options: ["Will they be playing", "Are they playing", "Do they play"], c: "Will they be playing" },
+                    { s: "___ he be eating lunch?", options: ["Will he be eating", "Is he eating", "Does he eat"], c: "Will he be eating" },
+                    { s: "___ she be wearing a new dress?", options: ["Will she be wearing", "Is she wearing", "Does she wear"], c: "Will she be wearing" },
+                    { s: "___ he be playing video games?", options: ["Will he be playing", "Is he playing", "Does he play"], c: "Will he be playing" },
+                    { s: "___ it be raining when we leave?", options: ["Will it be raining", "Is it raining", "Does it rain"], c: "Will it be raining" },
+                    { s: "___ we be having dinner together?", options: ["Will we be having", "Are we having", "Do we have"], c: "Will we be having" },
+                    { s: "___ they be travelling all next week?", options: ["Will they be travelling", "Are they travelling", "Do they travel"], c: "Will they be travelling" },
+                    { s: "___ she be reading a book?", options: ["Will she be reading", "Is she reading", "Does she read"], c: "Will she be reading" },
+                    { s: "___ he be listening to music?", options: ["Will he be listening", "Is he listening", "Does he listen"], c: "Will he be listening" },
+                    { s: "___ you be going to the cinema?", options: ["Will you be going", "Are you going", "Do you go"], c: "Will you be going" },
+                    { s: "___ they be talking on the phone?", options: ["Will they be talking", "Are they talking", "Do they talk"], c: "Will they be talking" },
+                    { s: "___ I be checking my emails?", options: ["Will I be checking", "Am I checking", "Do I check"], c: "Will I be checking" }
+                ]
+            },
+            fp: {
+                affirmative: [
+                    { s: "By next year, I ___.", options: ["graduate", "will have graduated", "will graduate"], c: "will have graduated" },
+                    { s: "By 5 PM, she ___ her report.", options: ["finish", "will have finished", "will finish"], c: "will have finished" },
+                    { s: "He ___ the book by next month.", options: ["read", "will have read", "will read"], c: "will have read" },
+                    { s: "By the time you get home, I ___ dinner.", options: ["cook", "will have cooked", "will cook"], c: "will have cooked" },
+                    { s: "We ___ the project by the deadline.", options: ["finish", "will have finished", "will finish"], c: "will have finished" },
+                    { s: "By tomorrow, she ___ her packing.", options: ["finish", "will have finished", "will finish"], c: "will have finished" },
+                    { s: "By the end of the day, I ___ ten reports.", options: ["write", "will have written", "will write"], c: "will have written" },
+                    { s: "She ___ a new house by next year.", options: ["buy", "will have bought", "will buy"], c: "will have bought" },
+                    { s: "They ___ the exam by the end of the week.", options: ["pass", "will have passed", "will pass"], c: "will have passed" },
+                    { s: "I ___ my work by the time you arrive.", options: ["do", "will have done", "will do"], c: "will have done" },
+                    { s: "By the end of the month, we ___ this project.", options: ["complete", "will have completed", "will complete"], c: "will have completed" },
+                    { s: "She ___ in London for five years by 2025.", options: ["live", "will have lived", "will live"], c: "will have lived" },
+                    { s: "We ___ the competition by next week.", options: ["win", "will have won", "will win"], c: "will have won" },
+                    { s: "They ___ their flight.", options: ["miss", "will have missed", "will miss"], c: "will have missed" },
+                    { s: "He ___ his new job by Monday.", options: ["start", "will have started", "will start"], c: "will have started" }
+                ],
+                negative: [
+                    { s: "They ___ not have arrived by midnight.", options: ["will not have arrived", "won't have arrived", "don't have arrived"], c: "will not have arrived" },
+                    { s: "She ___ not have finished her report by 5 PM.", options: ["will not have finished", "won't have finished", "isn't finished"], c: "will not have finished" },
+                    { s: "She ___ not have left by then.", options: ["will not have left", "won't have left", "isn't left"], c: "will not have left" },
+                    { s: "He ___ not have eaten anything by then.", options: ["will not have eaten", "won't have eaten", "isn't eaten"], c: "will not have eaten" },
+                    { s: "We ___ not have started the project by Monday.", options: ["will not have started", "won't have started", "aren't started"], c: "will not have started" },
+                    { s: "He ___ not have sent the email.", options: ["will not have sent", "won't have sent", "doesn't have sent"], c: "will not have sent" },
+                    { s: "We ___ not have found the solution.", options: ["will not have found", "won't have found", "haven't found"], c: "will not have found" },
+                    { s: "She ___ not have cleaned her room.", options: ["will not have cleaned", "won't have cleaned", "hasn't cleaned"], c: "will not have cleaned" },
+                    { s: "He ___ not have finished his studies.", options: ["will not have finished", "won't have finished", "hasn't finished"], c: "will not have finished" },
+                    { s: "I ___ not have seen that movie.", options: ["will not have seen", "won't have seen", "haven't seen"], c: "will not have seen" },
+                    { s: "She ___ not have bought anything.", options: ["will not have bought", "won't have bought", "hasn't bought"], c: "will not have bought" },
+                    { s: "I ___ not have learned much.", options: ["will not have learned", "won't have learned", "haven't learned"], c: "will not have learned" },
+                    { s: "They ___ not have bought a new car.", options: ["will not have bought", "won't have bought", "haven't bought"], c: "will not have bought" },
+                    { s: "He ___ not have completed the task.", options: ["will not have completed", "won't have completed", "hasn't completed"], c: "will not have completed" },
+                    { s: "We ___ not have prepared dinner.", options: ["will not have prepared", "won't have prepared", "haven't prepared"], c: "will not have prepared" }
+                ],
+                interrogative: [
+                    { s: "___ you have completed the task by Friday?", options: ["Will you have completed", "Have you completed", "Do you complete"], c: "Will you have completed" },
+                    { s: "___ she have read the book?", options: ["Will she have read", "Has she read", "Does she read"], c: "Will she have read" },
+                    { s: "___ they have arrived by midnight?", options: ["Will they have arrived", "Have they arrived", "Do they arrive"], c: "Will they have arrived" },
+                    { s: "How many books ___ you have read by the end of the year?", options: ["will you have read", "have you read", "do you read"], c: "will you have read" },
+                    { s: "___ she have prepared for the presentation?", options: ["Will she have prepared", "Has she prepared", "Does she prepare"], c: "Will she have prepared" },
+                    { s: "___ he have fixed the car?", options: ["Will he have fixed", "Has he fixed", "Does he fix"], c: "Will he have fixed" },
+                    { s: "___ you have called them?", options: ["Will you have called", "Have you called", "Do you call"], c: "Will you have called" },
+                    { s: "___ he have completed his studies?", options: ["Will he have completed", "Has he completed", "Does he complete"], c: "Will he have completed" },
+                    { s: "___ they have prepared dinner?", options: ["Will they have prepared", "Have they prepared", "Do they prepare"], c: "Will they have prepared" },
+                    { s: "___ she arrived?", options: ["Will she have arrived", "Has she arrived", "Did she arrive"], c: "Will she have arrived" },
+                    { s: "___ you have visited all the museums?", options: ["Will you have visited", "Have you visited", "Do you visit"], c: "Will you have visited" },
+                    { s: "___ he have eaten all the food?", options: ["Will he have eaten", "Has he eaten", "Did he eat"], c: "Will he have eaten" },
+                    { s: "___ they have played the game?", options: ["Will they have played", "Have they played", "Do they play"], c: "Will they have played" },
+                    { s: "___ we have seen all the sights?", options: ["Will we have seen", "Have we seen", "Do we see"], c: "Will we have seen" },
+                    { s: "___ she have finished her work?", options: ["Will she have finished", "Has she finished", "Did she finish"], c: "Will she have finished" }
+                ]
+            },
+            fpc: {
+                affirmative: [
+                    { s: "By midnight, I ___ for five hours.", options: ["write", "will have been writing", "will write"], c: "will have been writing" },
+                    { s: "By next month, he ___ for ten years.", options: ["work", "will have been working", "will work"], c: "will have been working" },
+                    { s: "By 2030, we ___ in this house for twenty years.", options: ["live", "will have been living", "will live"], c: "will have been living" },
+                    { s: "By noon, I ___ for four hours.", options: ["study", "will have been studying", "will study"], c: "will have been studying" },
+                    { s: "They ___ on the project all night.", options: ["work", "will have been working", "will work"], c: "will have been working" },
+                    { s: "He ___ for hours when he collapsed.", options: ["run", "will have been running", "will run"], c: "will have been running" },
+                    { s: "We ___ for ages when the taxi arrives.", options: ["wait", "will have been waiting", "will wait"], c: "will have been waiting" },
+                    { s: "By Christmas, we ___ in this city for a year.", options: ["live", "will have been living", "will live"], c: "will have been living" },
+                    { s: "I ___ for three days by Friday.", options: ["write", "will have been writing", "will write"], c: "will have been writing" },
+                    { s: "She ___ for this company for five years.", options: ["work", "will have been working", "will work"], c: "will have been working" },
+                    { s: "By the end of the trip, they ___ for a month.", options: ["travel", "will have been traveling", "will travel"], c: "will have been traveling" },
+                    { s: "By the time you finish, I ___ for three hours.", options: ["cook", "will have been cooking", "will cook"], c: "will have been cooking" },
+                    { s: "By the end of the week, I ___ on this report for a month.", options: ["work", "will have been working", "will work"], c: "will have been working" },
+                    { s: "By next year, they ___ a new language for two years.", options: ["learn", "will have been learning", "will learn"], c: "will have been learning" },
+                    { s: "By 2025, he ___ for this company for twenty years.", options: ["work", "will have been working", "will work"], c: "will have been working" }
+                ],
+                negative: [
+                    { s: "She ___ not have been waiting long when you arrive.", options: ["will not have been waiting", "won't have been waiting", "isn't been waiting"], c: "will not have been waiting" },
+                    { s: "He ___ not have been running for two hours by then.", options: ["will not have been running", "won't have been running", "isn't been running"], c: "will not have been running" },
+                    { s: "They ___ not have been studying much.", options: ["will not have been studying", "won't have been studying", "aren't been studying"], c: "will not have been studying" },
+                    { s: "He ___ not have been sleeping when you call.", options: ["will not have been sleeping", "won't have been sleeping", "isn't been sleeping"], c: "will not have been sleeping" },
+                    { s: "She ___ not have been crying when he saw her.", options: ["will not have been crying", "won't have been crying", "isn't been crying"], c: "will not have been crying" },
+                    { s: "I ___ not have been eating healthy.", options: ["will not have been eating", "won't have been eating", "am not been eating"], c: "will not have been eating" },
+                    { s: "He ___ not have been practicing.", options: ["will not have been practicing", "won't have been practicing", "isn't been practicing"], c: "will not have been practicing" },
+                    { s: "The children ___ not have been playing quietly.", options: ["will not have been playing", "won't have been playing", "aren't been playing"], c: "will not have been playing" },
+                    { s: "She ___ not have been attending classes regularly.", options: ["will not have been attending", "won't have been attending", "isn't been attending"], c: "will not have been attending" },
+                    { s: "He ___ not have been listening to the instructions.", options: ["will not have been listening", "won't have been listening", "isn't been listening"], c: "will not have been listening" },
+                    { s: "I ___ not have been exercising enough.", options: ["will not have been exercising", "won't have been exercising", "am not been exercising"], c: "will not have been exercising" },
+                    { s: "She ___ not have been visiting her parents.", options: ["will not have been visiting", "won't have been visiting", "isn't been visiting"], c: "will not have been visiting" },
+                    { s: "He ___ not have been talking to me.", options: ["will not have been talking", "won't have been talking", "isn't been talking"], c: "will not have been talking" },
+                    { s: "They ___ not have been playing that game.", options: ["will not have been playing", "won't have been playing", "aren't been playing"], c: "will not have been playing" },
+                    { s: "You ___ not have been sleeping enough.", options: ["will not have been sleeping", "won't have been sleeping", "aren't been sleeping"], c: "will not have been sleeping" }
+                ],
+                interrogative: [
+                    { s: "___ you have been learning by then?", options: ["Will you have been learning", "Have you been learning", "Are you learning"], c: "Will you have been learning" },
+                    { s: "___ they have been talking for long?", options: ["Will they have been talking", "Have they been talking", "Are they talking"], c: "Will they have been talking" },
+                    { s: "___ she have been teaching for a decade?", options: ["Will she have been teaching", "Has she been teaching", "Is she teaching"], c: "Will she have been teaching" },
+                    { s: "___ you have been driving for long?", options: ["Will you have been driving", "Have you been driving", "Are you driving"], c: "Will you have been driving" },
+                    { s: "___ he have been running for long?", options: ["Will he have been running", "Has he been running", "Is he running"], c: "Will he have been running" },
+                    { s: "___ it have been snowing all night?", options: ["Will it have been snowing", "Has it been snowing", "Is it snowing"], c: "Will it have been snowing" },
+                    { s: "___ she have been watching TV all day?", options: ["Will she have been watching", "Has she been watching", "Is she watching"], c: "Will she have been watching" },
+                    { s: "___ you have been feeling tired?", options: ["Will you have been feeling", "Have you been feeling", "Are you feeling"], c: "Will you have been feeling" },
+                    { s: "___ they have been waiting for hours?", options: ["Will they have been waiting", "Have they been waiting", "Are they waiting"], c: "Will they have been waiting" },
+                    { s: "___ he have been listening to the instructions?", options: ["Will he have been listening", "Has he been listening", "Is he listening"], c: "Will he have been listening" },
+                    { s: "___ you have been cleaning your room?", options: ["Will you have been cleaning", "Have you been cleaning", "Are you cleaning"], c: "Will you have been cleaning" },
+                    { s: "___ she have been reading that book for weeks?", options: ["Will she have been reading", "Has she been reading", "Is she reading"], c: "Will she have been reading" },
+                    { s: "___ he have been studying for the exam?", options: ["Will he have been studying", "Has he been studying", "Is he studying"], c: "Will he have been studying" },
+                    { s: "___ they have been playing that game for a long time?", options: ["Will they have been playing", "Have they been playing", "Are they playing"], c: "Will they have been playing" },
+                    { s: "___ we have been doing this for a long time?", options: ["Will we have been doing", "Have we been doing", "Are we doing"], c: "Will we have been doing" }
+                ]
+            }
         };
 
         let currentScores = {};
+        let currentQuestionIndexes = {};
+        let shuffledExercises = {};
+        let userAnswers = {};
+        let currentErrorLog = {};
+
 
         document.addEventListener('DOMContentLoaded', function() {
             const allTabsContainers = document.querySelectorAll('.tabs');
@@ -695,6 +1222,9 @@
             allTabsContainers.forEach(tabsContainer => {
                 const tenseId = tabsContainer.dataset.tense;
                 currentScores[tenseId] = { correct: 0, total: 0 };
+                currentQuestionIndexes[tenseId] = 0;
+                userAnswers[tenseId] = [];
+                currentErrorLog[tenseId] = [];
 
                 const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
                 const tabContents = tabsContainer.querySelectorAll('.tab-content');
@@ -713,7 +1243,7 @@
                             if (content.dataset.tabContent === tabName) {
                                 content.classList.remove('hidden');
                                 if (tabName === 'trainer') {
-                                    renderExercises(tenseId, exerciseArea, resultArea);
+                                    startNewTrainerSession(tenseId, exerciseArea, resultArea);
                                 }
                             } else {
                                 content.classList.add('hidden');
@@ -723,7 +1253,7 @@
                 });
 
                 resetButton.addEventListener('click', () => {
-                    resetExercise(tenseId, exerciseArea, resultArea);
+                    startNewTrainerSession(tenseId, exerciseArea, resultArea);
                 });
             });
             
@@ -740,80 +1270,148 @@
             });
         });
 
-        function renderExercises(tenseId, exerciseArea, resultArea) {
-            exerciseArea.innerHTML = '';
-            resultArea.classList.add('hidden');
-            currentScores[tenseId] = { correct: 0, total: 0 };
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
-            if (!exercises[tenseId] || exercises[tenseId].length === 0) {
+        function startNewTrainerSession(tenseId, exerciseArea, resultArea) {
+            currentScores[tenseId] = { correct: 0, total: 0 };
+            currentQuestionIndexes[tenseId] = 0;
+            userAnswers[tenseId] = [];
+            currentErrorLog[tenseId] = [];
+
+            let selectedAffirmative = shuffleArray([...allExercises[tenseId].affirmative]).slice(0, 5);
+            let selectedNegative = shuffleArray([...allExercises[tenseId].negative]).slice(0, 5);
+            let selectedInterrogative = shuffleArray([...allExercises[tenseId].interrogative]).slice(0, 5);
+
+            shuffledExercises[tenseId] = shuffleArray([
+                ...selectedAffirmative,
+                ...selectedNegative,
+                ...selectedInterrogative
+            ]);
+            
+            resultArea.classList.add('hidden');
+            resultArea.querySelector('.error-list').innerHTML = '';
+            renderSingleQuestion(tenseId, exerciseArea, resultArea);
+        }
+
+        function renderSingleQuestion(tenseId, exerciseArea, resultArea) {
+            exerciseArea.innerHTML = ''; // Clear previous content
+
+            if (shuffledExercises[tenseId].length === 0) {
                 exerciseArea.innerHTML = '<p class="text-[#6E6E6E]">Упражнения для этого времени пока не добавлены.</p>';
                 return;
             }
 
-            exercises[tenseId].forEach((exercise, index) => {
-                const questionDiv = document.createElement('div');
-                questionDiv.classList.add('mb-4', 'p-4', 'border', 'border-[#A69B8F]/30', 'rounded-md', 'bg-gray-50');
-                questionDiv.innerHTML = `
-                    <p class="font-semibold mb-3">${index + 1}. ${exercise.sentence.replace('___', '<span class="text-[#E6A473]">___</span>')}</p>
-                    <div class="options space-y-2">
-                        ${exercise.options.map((option, optIndex) => `
-                            <label class="block cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors">
-                                <input type="radio" name="q${tenseId}-${index}" value="${option}" class="mr-2 accent-[#E6A473]">
-                                ${option}
-                            </label>
-                        `).join('')}
-                    </div>
-                    <div class="feedback mt-2 text-sm"></div>
-                `;
-                exerciseArea.appendChild(questionDiv);
-            });
+            if (currentQuestionIndexes[tenseId] >= shuffledExercises[tenseId].length) {
+                showFinalResults(tenseId, exerciseArea, resultArea);
+                return;
+            }
 
-            const checkButton = document.createElement('button');
-            checkButton.classList.add('bg-[#E6A473]', 'text-white', 'py-2', 'px-4', 'rounded-md', 'hover:bg-[#D59463]', 'transition-colors', 'block', 'w-full', 'mt-4');
-            checkButton.textContent = 'Проверить ответы';
-            checkButton.addEventListener('click', () => checkAnswers(tenseId, exerciseArea, resultArea));
-            exerciseArea.appendChild(checkButton);
+            const exercise = shuffledExercises[tenseId][currentQuestionIndexes[tenseId]];
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('mb-4', 'p-4', 'border', 'border-[#A69B8F]/30', 'rounded-md', 'bg-gray-50');
+            questionDiv.innerHTML = `
+                <p class="font-semibold mb-3">${currentQuestionIndexes[tenseId] + 1}. ${exercise.s.replace('___', '<span class="text-[#E6A473]">___</span>')}</p>
+                <div class="options space-y-2">
+                    ${exercise.options.map(option => `
+                        <label class="block cursor-pointer hover:bg-gray-100 p-2 rounded-md transition-colors">
+                            <input type="radio" name="q${tenseId}-${currentQuestionIndexes[tenseId]}" value="${option}" class="mr-2 accent-[#E6A473]" ${userAnswers[tenseId][currentQuestionIndexes[tenseId]] === option ? 'checked' : ''}>
+                            ${option}
+                        </label>
+                    `).join('')}
+                </div>
+                <div class="feedback mt-2 text-sm"></div>
+            `;
+            exerciseArea.appendChild(questionDiv);
+
+            const selectedOption = questionDiv.querySelector(`input[name="q${tenseId}-${currentQuestionIndexes[tenseId]}"]:checked`);
+            if (selectedOption) {
+                const feedbackDiv = questionDiv.querySelector('.feedback');
+                if (selectedOption.value === exercise.c) {
+                    feedbackDiv.innerHTML = '<span class="correct-answer">&#10003; Правильно!</span>';
+                } else {
+                    feedbackDiv.innerHTML = `<span class="wrong-answer">&#10007; Неправильно. Правильный ответ: ${exercise.c}</span>`;
+                }
+                questionDiv.querySelectorAll('input[type="radio"]').forEach(input => input.disabled = true);
+            }
+
+
+            // Add navigation buttons
+            const navButtonsDiv = document.createElement('div');
+            navButtonsDiv.classList.add('flex', 'justify-between', 'mt-4');
+
+            const prevButton = document.createElement('button');
+            prevButton.classList.add('trainer-nav-btn');
+            prevButton.textContent = 'Предыдущий';
+            prevButton.disabled = currentQuestionIndexes[tenseId] === 0;
+            prevButton.addEventListener('click', () => {
+                const selected = questionDiv.querySelector(`input[name="q${tenseId}-${currentQuestionIndexes[tenseId]}"]:checked`);
+                userAnswers[tenseId][currentQuestionIndexes[tenseId]] = selected ? selected.value : null;
+                currentQuestionIndexes[tenseId]--;
+                renderSingleQuestion(tenseId, exerciseArea, resultArea);
+            });
+            navButtonsDiv.appendChild(prevButton);
+
+            const nextButton = document.createElement('button');
+            nextButton.classList.add('trainer-nav-btn');
+            nextButton.textContent = 'Следующий';
+            if (currentQuestionIndexes[tenseId] === shuffledExercises[tenseId].length - 1) {
+                nextButton.textContent = 'Завершить';
+            }
+            nextButton.addEventListener('click', () => {
+                const selected = questionDiv.querySelector(`input[name="q${tenseId}-${currentQuestionIndexes[tenseId]}"]:checked`);
+                userAnswers[tenseId][currentQuestionIndexes[tenseId]] = selected ? selected.value : null;
+                
+                // Only evaluate score and log error when moving *forward* and it's a new answer
+                if (!selectedOption) { // If it wasn't already answered
+                    currentScores[tenseId].total++;
+                    if (selected && selected.value === exercise.c) {
+                        currentScores[tenseId].correct++;
+                    } else {
+                        currentErrorLog[tenseId].push({
+                            question: exercise.s,
+                            userAnswer: selected ? selected.value : 'Не отвечено',
+                            correctAnswer: exercise.c
+                        });
+                    }
+                }
+                
+                currentQuestionIndexes[tenseId]++;
+                renderSingleQuestion(tenseId, exerciseArea, resultArea);
+            });
+            navButtonsDiv.appendChild(nextButton);
+
+            exerciseArea.appendChild(navButtonsDiv);
         }
 
-        function checkAnswers(tenseId, exerciseArea, resultArea) {
-            let correctCount = 0;
-            let totalCount = 0;
-
-            exercises[tenseId].forEach((exercise, index) => {
-                const questionDiv = exerciseArea.children[index];
-                const selectedOption = questionDiv.querySelector(`input[name="q${tenseId}-${index}"]:checked`);
-                const feedbackDiv = questionDiv.querySelector('.feedback');
-                const optionsDiv = questionDiv.querySelector('.options');
-                
-                optionsDiv.querySelectorAll('input').forEach(input => input.disabled = true); // Disable inputs after check
-
-                if (selectedOption) {
-                    totalCount++;
-                    if (selectedOption.value === exercise.correct) {
-                        feedbackDiv.innerHTML = '<span class="correct-answer">&#10003; Правильно!</span>';
-                        correctCount++;
-                    } else {
-                        feedbackDiv.innerHTML = `<span class="wrong-answer">&#10007; Неправильно. Правильный ответ: ${exercise.correct}</span>`;
-                    }
-                } else {
-                    feedbackDiv.innerHTML = '<span class="wrong-answer">&#10007; Выберите ответ. Правильный ответ: ' + exercise.correct + '</span>';
-                }
-            });
-
-            currentScores[tenseId].correct = correctCount;
-            currentScores[tenseId].total = totalCount;
-            updateResultArea(tenseId, resultArea);
+        function showFinalResults(tenseId, exerciseArea, resultArea) {
+            exerciseArea.innerHTML = '<p class="text-xl font-semibold mb-4">Результаты тренажера</p>';
             resultArea.classList.remove('hidden');
-            exerciseArea.querySelector('button').classList.add('hidden'); // Hide check button after showing results
+            resultArea.querySelector('.error-list').innerHTML = '';
+
+            const errorList = resultArea.querySelector('.error-list');
+            if (currentErrorLog[tenseId].length > 0) {
+                currentErrorLog[tenseId].forEach((error, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `Вопрос ${index + 1}: <span class="font-normal text-[#6E6E6E]">${error.question.replace('___', '<span class="text-[#E6A473]">___</span>')}</span><br>
+                                          Ваш ответ: <span class="wrong-answer">${error.userAnswer}</span>. Правильный: <span class="correct-answer">${error.correctAnswer}</span>`;
+                    errorList.appendChild(listItem);
+                });
+            } else {
+                errorList.innerHTML = '<li class="text-green-600">Все ответы правильные! Отличная работа!</li>';
+            }
+
+            updateResultArea(tenseId, resultArea);
         }
 
         function updateResultArea(tenseId, resultArea) {
             resultArea.querySelector('.correct-count').textContent = currentScores[tenseId].correct;
             resultArea.querySelector('.total-count').textContent = currentScores[tenseId].total;
-        }
-
-        function resetExercise(tenseId, exerciseArea, resultArea) {
-            renderExercises(tenseId, exerciseArea, resultArea);
         }
     </script>
 </body>
