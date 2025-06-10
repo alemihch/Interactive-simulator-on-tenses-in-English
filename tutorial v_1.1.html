@@ -9,8 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Calm & Harmonious -->
-    <!-- Application Structure Plan: The application now uses a categorical, section-based structure (Simple, Continuous, Perfect, Perfect Continuous), which is a more pedagogical approach for understanding tense aspects. A sticky navigation bar allows for intuitive exploration between these new categories. Each tense is presented on an interactive card with internal tabs for "Rules" (now with detailed pronoun-verb agreement), "Usage & Signals," "Examples," and an enhanced "Trainer" with sequential multiple-choice questions, navigation, and score tracking with detailed error reporting. This multi-layered design breaks down complex information into digestible, interactive, and user-controlled chunks, promoting active, personalized learning and preventing information overload, which is superior to a static table for this type of content. -->
-    <!-- Visualization & Content Choices: Goal: Organize, Inform, Engage & Assess. Method: Structured HTML/CSS with Tailwind for a responsive, card-based layout and interactive forms. Interaction: Clickable tabs within each card switch between content panes (Rules, Usage, Examples, Trainer). The individual Trainer tabs feature sequential multiple-choice questions with dynamic feedback, navigation buttons, and detailed score summaries including incorrect answers. Justification: Since the source data is textual and rule-based, traditional charts are inappropriate. The interactive card/tab model is the most effective way to organize this layered information. The addition of robust interactive exercises with sequential navigation and comprehensive feedback directly addresses the need for practical application, reinforcement, and personalized practice of grammar rules. The specific addition of pronoun-verb agreement in rules addresses direct user feedback for clarity. Library/Method: Vanilla JS for all interactions and exercise logic. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- Application Structure Plan: The application now uses a categorical, section-based structure (Simple, Continuous, Perfect, Perfect Continuous), which is a more pedagogical approach for understanding tense aspects. A sticky navigation bar allows for intuitive exploration between these new categories. Each tense is presented on an interactive card with internal tabs for "Rules" (now with detailed pronoun-verb agreement in a table format), "Usage & Signals," "Examples," and an enhanced "Trainer" with sequential multiple-choice questions, navigation, and score tracking with detailed error reporting. This multi-layered design breaks down complex information into digestible, interactive, and user-controlled chunks, promoting active, personalized learning and preventing information overload, which is superior to a static table for this type of content. -->
+    <!-- Visualization & Content Choices: Goal: Organize, Inform, Engage & Assess. Method: Structured HTML/CSS with Tailwind for a responsive, card-based layout and interactive forms. Interaction: Clickable tabs within each card switch between content panes (Rules, Usage, Examples, Trainer). The individual Trainer tabs feature sequential multiple-choice questions with dynamic feedback, navigation buttons, and detailed score summaries including incorrect answers. The specific addition of pronoun-verb agreement in rules now uses a table structure with nested lists for improved clarity and readability of grammatical rules. Library/Method: Vanilla JS for all interactions and exercise logic. CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
@@ -40,6 +40,34 @@
         }
         .trainer-nav-btn {
             @apply bg-[#A69B8F] text-white py-2 px-4 rounded-md hover:bg-[#8B7F74] transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+        }
+        /* Table styling for rules */
+        .rules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .rules-table th, .rules-table td {
+            border: 1px solid #E5E7EB; /* Tailwind gray-200 */
+            padding: 0.75rem;
+            text-align: left;
+            vertical-align: top;
+        }
+        .rules-table th {
+            background-color: #F9FAFB; /* Tailwind gray-50 */
+            font-weight: 600;
+            color: #3D3D3D;
+        }
+        .rules-table ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .rules-table ul li {
+            margin-bottom: 0.25rem;
+        }
+        .rules-table ul li:last-child {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -77,11 +105,47 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                                <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S + V1 (I, You, We, They) / V_s(es) (He, She, It)</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S + do not (don't) (I, You, We, They) / does not (doesn't) (He, She, It) + V1</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Do (I, You, We, They) / Does (He, She, It) + S + V1?</li>
-                                </ul>
+                                <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + V1 / V_s(es)</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, You, We, They: V1 (e.g., work)</li>
+                                                    <li>He, She, It: V_s(es) (e.g., works, watches)</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + do not (don't) / does not (doesn't) + V1</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, You, We, They: do not (don't) + V1</li>
+                                                    <li>He, She, It: does not (doesn't) + V1</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Do / Does + S + V1?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, You, We, They: Do + S + V1?</li>
+                                                    <li>He, She, It: Does + S + V1?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -117,11 +181,44 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S (для всех местоимений) + V2 / V_ed</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S (для всех местоимений) + did not (didn't) + V1</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Did (для всех местоимений) + S + V1?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + V2 / V_ed</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: V2 / V_ed (e.g., worked, went)</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + did not (didn't) + V1</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: did not (didn't) + V1</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Did + S + V1?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: Did + S + V1?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -157,11 +254,44 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S (для всех местоимений) + will + V1</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S (для всех местоимений) + will not (won't) + V1</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Will (для всех местоимений) + S + V1?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + will + V1</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: will + V1</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + will not (won't) + V1</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: will not (won't) + V1</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Will + S + V1?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: Will + S + V1?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -204,11 +334,50 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                                <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S + am (I) / is (He, She, It) / are (You, We, They) + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S + am not (I) / is not (isn't) (He, She, It) / are not (aren't) (You, We, They) + Ving</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Am (I) / Is (He, She, It) / Are (You, We, They) + S + Ving?</li>
-                                </ul>
+                                <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + am / is / are + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I: am + Ving</li>
+                                                    <li>He, She, It: is + Ving</li>
+                                                    <li>You, We, They: are + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + am not / is not (isn't) / are not (aren't) + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I: am not + Ving</li>
+                                                    <li>He, She, It: is not (isn't) + Ving</li>
+                                                    <li>You, We, They: are not (aren't) + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Am / Is / Are + S + Ving?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Am: I + Ving?</li>
+                                                    <li>Is: He, She, It + Ving?</li>
+                                                    <li>Are: You, We, They + Ving?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -244,11 +413,47 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S + was (I, He, She, It) / were (You, We, They) + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S + was not (wasn't) (I, He, She, It) / were not (weren't) (You, We, They) + Ving</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Was (I, He, She, It) / Were (You, We, They) + S + Ving?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + was / were + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, He, She, It: was + Ving</li>
+                                                    <li>You, We, They: were + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + was not (wasn't) / were not (weren't) + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, He, She, It: was not (wasn't) + Ving</li>
+                                                    <li>You, We, They: were not (weren't) + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Was / Were + S + Ving?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Was: I, He, She, It + Ving?</li>
+                                                    <li>Were: You, We, They + Ving?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -284,11 +489,44 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will be + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not (won't) + be + Ving</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + be + Ving?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + will be + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: will be + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + will not (won't) + be + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: will not (won't) + be + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Will + S + be + Ving?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: Will + S + be + Ving?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -331,11 +569,47 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                                <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S + have (I, You, We, They) / has (He, She, It) + V3</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S + have not (haven't) (I, You, We, They) / has not (hasn't) (He, She, It) + V3</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Have (I, You, We, They) / Has (He, She, It) + S + V3?</li>
-                                </ul>
+                                <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + have / has + V3</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, You, We, They: have + V3</li>
+                                                    <li>He, She, It: has + V3</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + have not (haven't) / has not (hasn't) + V3</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, You, We, They: have not (haven't) + V3</li>
+                                                    <li>He, She, It: has not (hasn't) + V3</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Have / Has + S + V3?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Have: I, You, We, They + V3?</li>
+                                                    <li>Has: He, She, It + V3?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -371,11 +645,44 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S (для всех местоимений) + had + V3</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S (для всех местоимений) + had not (hadn't) + V3</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Had (для всех местоимений) + S + V3?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + had + V3</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: had + V3</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + had not (hadn't) + V3</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: had not (hadn't) + V3</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Had + S + V3?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: Had + S + V3?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -411,11 +718,44 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S (для всех местоимений) + will have + V3</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S (для всех местоимений) + will not (won't) + have + V3</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Will (для всех местоимений) + S + have + V3?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + will have + V3</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: will have + V3</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + will not (won't) + have + V3</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: will not (won't) + have + V3</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Will + S + have + V3?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: Will + S + have + V3?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -458,11 +798,47 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> **Утверждение:** S + have (I, You, We, They) / has (He, She, It) + been + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> **Отрицание:** S + have not (haven't) (I, You, We, They) / has not (hasn't) (He, She, It) + been + Ving</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> **Вопрос:** Have (I, You, We, They) / Has (He, She, It) + S + been + Ving?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + have / has + been + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, You, We, They: have been + Ving</li>
+                                                    <li>He, She, It: has been + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + have not (haven't) / has not (hasn't) + been + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>I, You, We, They: have not (haven't) been + Ving</li>
+                                                    <li>He, She, It: has not (hasn't) been + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Have / Has + S + been + Ving?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Have: I, You, We, They + been + Ving?</li>
+                                                    <li>Has: He, She, It + been + Ving?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -498,11 +874,44 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + had been + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + had not been + Ving</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Had + S + been + Ving?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + had been + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: had been + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + had not (hadn't) + been + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: had not (hadn't) + been + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Had + S + been + Ving?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: Had + S + been + Ving?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -538,11 +947,44 @@
                                 <button class="tab-btn text-sm sm:text-base" data-tab="trainer">Тренажер</button>
                             </div>
                             <div class="tab-content" data-tab-content="rules">
-                               <ul class="space-y-3">
-                                    <li><span class="font-bold text-lg text-green-600 mr-2">+</span> S + will have been + Ving</li>
-                                    <li><span class="font-bold text-lg text-red-600 mr-2">−</span> S + will not (won't) + have been + Ving</li>
-                                    <li><span class="font-bold text-lg text-blue-600 mr-2">?</span> Will + S + have been + Ving?</li>
-                                </ul>
+                               <table class="rules-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Тип</th>
+                                            <th>Форма</th>
+                                            <th>Местоимения и глаголы</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-green-600 mr-2">+</span> Утверждение</td>
+                                            <td>S + will have been + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: will have been + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-red-600 mr-2">−</span> Отрицание</td>
+                                            <td>S + will not (won't) + have been + Ving</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: will not (won't) + have been + Ving</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="font-bold text-lg text-blue-600 mr-2">?</span> Вопрос</td>
+                                            <td>Will + S + have been + Ving?</td>
+                                            <td>
+                                                <ul>
+                                                    <li>Для всех местоимений: Will + S + have been + Ving?</li>
+                                                </ul>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="tab-content hidden" data-tab-content="usage">
                                 <h4 class="font-bold mb-2">Когда используется:</h4>
@@ -1017,7 +1459,7 @@
                     { s: "We ___ to the beach.", options: ["go", "will go", "are going"], c: "will go" },
                     { s: "I ___ for you.", options: ["wait", "will wait", "am waiting"], c: "will wait" },
                     { s: "She ___ her exams.", options: ["pass", "will pass", "passes"], c: "will pass" },
-                    { s: "We ___ a new house.", options: ["buy", "will buy", "are buying"], c: "will will buy" },
+                    { s: "We ___ a new house.", options: ["buy", "will buy", "are buying"], c: "will buy" },
                     { s: "I ___ everything.", options: ["explain", "will explain", "explains"], c: "will explain" },
                     { s: "She ___ her best.", options: ["do", "will do", "does"], c: "will do" }
                 ],
@@ -1187,9 +1629,9 @@
                     { s: "He ___ not have been sleeping when you call.", options: ["will not have been sleeping", "won't have been sleeping", "isn't been sleeping"], c: "will not have been sleeping" },
                     { s: "She ___ not have been crying when he saw her.", options: ["will not have been crying", "won't have been crying", "isn't been crying"], c: "will not have been crying" },
                     { s: "I ___ not have been eating healthy.", options: ["will not have been eating", "won't have been eating", "am not been eating"], c: "will not have been eating" },
-                    { s: "He ___ not have been practicing.", options: ["will not have been practicing", "won't have been practicing", "isn't been practicing"], c: "will not have been practicing" },
-                    { s: "The children ___ not have been playing quietly.", options: ["will not have been playing", "won't have been playing", "aren't been playing"], c: "will not have been playing" },
-                    { s: "She ___ not have been attending classes regularly.", options: ["will not have been attending", "won't have been attending", "isn't been attending"], c: "will not have been attending" },
+                    { s: "He ___ not have been practicing.", options: ["will not have been practicing", "won't have been practicing", "isn't been practicing"], c: "will not be practicing" },
+                    { s: "The children ___ not have been playing quietly.", options: ["will not have been playing", "won't have been playing", "aren't been playing"], c: "will not be playing" },
+                    { s: "She ___ not have been attending classes regularly.", options: ["will not have been attending", "won't have been attending", "isn't been attending"], c: "will not be attending" },
                     { s: "He ___ not have been listening to the instructions.", options: ["will not have been listening", "won't have been listening", "isn't been listening"], c: "will not be listening" },
                     { s: "I ___ not have been exercising enough.", options: ["will not have been exercising", "won't have been exercising", "am not been exercising"], c: "will not be exercising" },
                     { s: "She ___ not have been visiting her parents.", options: ["will not have been visiting", "won't have been visiting", "isn't been visiting"], c: "will not be visiting" },
@@ -1351,7 +1793,7 @@
 
             // Add navigation buttons
             const navButtonsDiv = document.createElement('div');
-            navButtonsDiv.classList.add('flex', 'justify-between', 'mt-4');
+            navButtonsDiv.classList.add('flex', 'justify-between', 'mt-4', 'space-x-4');
 
             const prevButton = document.createElement('button');
             prevButton.classList.add('trainer-nav-btn');
